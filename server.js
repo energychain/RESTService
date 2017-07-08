@@ -14,7 +14,7 @@ function requestHandler(request,reply) {
 	
 	var node= new StromDAOBO.Node({external_id:account,testMode:true});
 	var r=request.path.split("/");
-	var r_class=r[1];
+	var r_class=r[2];
 	var r_address=r[2+shift];
 	var r_method=r[3+shift];
 	
