@@ -80,15 +80,33 @@ function populateObject(server) {
 	});		
 	server.route({
 		method: 'GET',
-		path: '/api/auth/{extid}',		
+		path: '/api/auth/{extid}/{secret}',		
 		config: { auth: false },
 		handler:   function(request,reply)  {
 						var node= new StromDAOBO.Node({external_id:"node",testMode:true});
-						var secret=node.nodeWallet.address;						;
+						var secret=node.nodeWallet.address;						
+						if(node.storage.getItemSync("jwt_"+request.params.extid)!=null) {
+									if(node.storage.getItemSync("jwt_"+request.params.extid)!= request.params.secret) {
+										var JWT   = require('jsonwebtoken');
+										var obj   = { id:'demo' }; // object/info you want to sign
+										var res={};
+										
+										res.token = JWT.sign(obj, secret);										
+										res.auth = "demo";
+										
+										reply(JSON.stringify(res));
+										return;
+									}
+						}
+						node.storage.setItemSync("jwt_"+request.params.extid,request.params.secret);
 						var JWT   = require('jsonwebtoken');
 						var obj   = { id:request.params.extid }; // object/info you want to sign
-						var token = JWT.sign(obj, secret);										
-						reply(JSON.stringify(token));
+							
+						var res={};
+						res.token = JWT.sign(obj, secret);	
+						res.auth = "secret";
+														
+						reply(JSON.stringify(res));
 				}
 	});		
 }
