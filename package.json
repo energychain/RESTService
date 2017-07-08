@@ -21,6 +21,7 @@
   "homepage": "https://github.com/energychain/RESTService#readme",
   "dependencies": {
     "hapi": "^16.4.3",
+    "hapi-auth-jwt2": "^7.3.0",
     "stromdao-businessobject": "^0.4.23"
   }
 }
