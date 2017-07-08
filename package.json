@@ -1,0 +1,26 @@
+{
+  "name": "stromdao-restservice",
+  "version": "1.0.0",
+  "description": "API REST Service for StromDAO Energy Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/energychain/RESTService.git"
+  },
+  "keywords": [
+    "stromdao"
+  ],
+  "author": "Thorsten Zoerner",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/energychain/RESTService/issues"
+  },
+  "homepage": "https://github.com/energychain/RESTService#readme",
+  "dependencies": {
+    "hapi": "^16.4.3",
+    "stromdao-businessobject": "^0.4.23"
+  }
+}
