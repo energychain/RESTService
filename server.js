@@ -193,7 +193,7 @@ startStopDaemon(options, function() {
 					}
 				}		
 	});
-	server.connection({ port: 3000, host: 'localhost',timeout:25000 });
+	server.connection({ port: 3000, host: 'localhost'});
 	var account="1337";
 	server.route({
 		method: 'GET',
