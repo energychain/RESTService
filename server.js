@@ -184,8 +184,16 @@ startStopDaemon(options, function() {
 	}
 
 
-	const server = new Hapi.Server();
-	server.connection({ port: 3000, host: 'localhost' });
+	const server = new Hapi.Server({		
+			  connections: {
+					routes: {
+						timeout: {
+							server: 25000 
+						}
+					}
+				}		
+	});
+	server.connection({ port: 3000, host: 'localhost',timeout:25000 });
 	var account="1337";
 	server.route({
 		method: 'GET',
