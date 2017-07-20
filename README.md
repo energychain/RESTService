@@ -1,2 +1,4 @@
 # RESTService
-REST API Service
+REST API Service for StromDAO Business Object
+
+
