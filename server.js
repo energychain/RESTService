@@ -1,6 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
+const Joi = require('joi');
 const StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
@@ -199,15 +200,20 @@ startStopDaemon(options, function() {
 		});			
 		server.route({
 			method: ['POST'],
-			path: '/cold/set',		
-			config: { auth: 'jwt',cors:cors },
-			handler:  requestColdStorageSet
-		});	
-		server.route({
-			method: ['POST'],
 			path: '/cold/get',		
 			config: { auth: 'jwt',cors:cors },
 			handler:  requestColdStorageGet
+		});	
+		server.route({
+			method: ['POST'],
+			path: '/cold/set',		
+			config: { auth: 'jwt',cors:cors },
+			handler:  requestColdStorageSet,
+			 validate: { 
+				payload: { 
+					bucket: Joi.string().min(1).required(), 
+					obj: Joi.string().min(1).required(),					
+				} }
 		});	
 	}
 
