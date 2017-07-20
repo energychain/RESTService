@@ -283,7 +283,7 @@ startStopDaemon(options, function() {
 		// Otherwise just continue with previous response
 		reply.continue()
 	  }
-	}
+	});
 
 	server.start((err) => {
 
