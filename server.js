@@ -207,13 +207,12 @@ startStopDaemon(options, function() {
 		server.route({
 			method: ['POST'],
 			path: '/cold/set',		
-			config: { auth: 'jwt',cors:cors },
-			handler:  requestColdStorageSet,
-			 validate: { 
+			config: { auth: 'jwt',cors:cors,validate: { 
 				payload: { 
 					bucket: Joi.string().min(1).required(), 
 					obj: Joi.string().min(1).required(),					
-				} }
+				} } },
+			handler:  requestColdStorageSet
 		});	
 	}
 
