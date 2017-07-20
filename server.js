@@ -71,8 +71,26 @@ startStopDaemon(options, function() {
 			  
 	};
 
+	function requestColdStorageSet(request,reply) {
+		var account=request.extid;
+		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		node.coldstorage().then(function(coldstorage) {
+				coldstorage.setObj(request.payload.bucket,request.payload.obj).then(function (o) {
+						reply(JSON.stringify(request.payload.obj));
+				});
+		});
+	}
 
-
+	function requestColdStorageGet(request,reply) {
+		var account=request.extid;
+		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		node.coldstorage().then(function(coldstorage) {
+				coldstorage.getObj(request.payload.bucket).then(function (o) {
+						reply(o);
+				});
+		});
+	}
+	
 	function requestHandler(request,reply) {
 		var account=request.extid;
 		var shift=1;
@@ -86,9 +104,7 @@ startStopDaemon(options, function() {
 		var r_method=r[4];
 		
 		var cargs=[];
-		if(r_address!="0x0") cargs.push(r_address);
-		
-		console.log("Class:",r_class,"At:",r_address,"For:",account,"Method:",r_method);
+		if(r_address!="0x0") cargs.push(r_address);				
 		
 		var margs=[];
 		
@@ -181,6 +197,18 @@ startStopDaemon(options, function() {
 			config: { auth: false,cors:cors },
 			handler:  loginHandler
 		});			
+		server.route({
+			method: ['POST'],
+			path: '/api/cold/set',		
+			config: { auth: true,cors:cors },
+			handler:  requestColdStorageSet
+		});	
+		server.route({
+			method: ['POST'],
+			path: '/api/cold/get',		
+			config: { auth: true,cors:cors },
+			handler:  requestColdStorageGet
+		});	
 	}
 
 
