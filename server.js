@@ -17,6 +17,22 @@ var node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
 
 startStopDaemon(options, function() {
+
+	function boomify (error) {
+	  // I'm using globals for some things (like sequelize), you should replace it with your sequelize instance
+	  if (error instanceof Core.db.sequelize.UniqueConstraintError) {
+		let be = Boom.create(400, `child "${error.errors[0].path}" fails because ["${error.errors[0].path}" must be unique]`)
+		be.output.payload.validation = {
+		  source: 'payload',
+		  keys: error.errors.map(e => e.path)
+		}
+		return be
+	  } else {
+		// If error wasn't found, return default boom internal error
+		return Boom.internal('An internal server error', error)
+	  }
+	}
+
 	 var cors= {
 			origin: ['*'],
 			additionalHeaders: ['cache-control', 'x-requested-with']
@@ -259,7 +275,15 @@ startStopDaemon(options, function() {
 		
 	});
 
-
+	server.ext('onPreResponse', (request, reply) => {
+	  // Transform only server errors 
+	  if (request.response.isBoom && request.response.isServer) {
+		reply(boomify(request.response))
+	  } else {
+		// Otherwise just continue with previous response
+		reply.continue()
+	  }
+	}
 
 	server.start((err) => {
 
