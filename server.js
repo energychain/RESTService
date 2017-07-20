@@ -200,13 +200,13 @@ startStopDaemon(options, function() {
 		server.route({
 			method: ['POST'],
 			path: '/api/cold/set',		
-			config: { auth: true,cors:cors },
+			config: { auth: 'jwt',cors:cors },
 			handler:  requestColdStorageSet
 		});	
 		server.route({
 			method: ['POST'],
 			path: '/api/cold/get',		
-			config: { auth: true,cors:cors },
+			config: { auth: 'jwt',cors:cors },
 			handler:  requestColdStorageGet
 		});	
 	}
