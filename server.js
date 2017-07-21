@@ -81,7 +81,7 @@ startStopDaemon(options, function() {
 	function requestColdStorageSet(request,reply) {
 		var account=request.extid;
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		console.log("coldSet",request.payload);
+		console.log("coldSet",request.payload,request);
 		node.coldstorage().then(function(coldstorage) {
 				coldstorage.setObj(request.payload.bucket,request.payload.obj).then(function (o) {
 						reply(JSON.stringify(request.payload.obj));
