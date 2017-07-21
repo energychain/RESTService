@@ -85,19 +85,21 @@ startStopDaemon(options, function() {
 			obj=request.payload.obj;
 		}	
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		node.storage.setItemSync(account+"_"+bucket,obj);
-		console.log(request);
-		reply(obj);
+		node.storage.setItemSync(account+"_"+bucket,obj);		
+		reply(JSON.stringify({address:account,bucket:bucket,data:obj});
 	}
 
 	function requestColdStorageGet(request,reply) {
 		var account=request.extid;
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		node.coldstorage().then(function(coldstorage) {
-				coldstorage.getObj(request.payload.bucket).then(function (o) {
-						reply(o);
-				});
-		});
+		var req="";
+		var bucket="";		
+		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+			bucket=request.query.secret;
+			req=request.query.address;
+		}
+		var obj=node.storage.getItemSync(req+"_"+bucket);
+		reply(JSON.stringify({address:req,bucket:bucket,data:obj});
 	}
 
 	function requestHandler(request,reply) {
