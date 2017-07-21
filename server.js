@@ -214,11 +214,11 @@ startStopDaemon(options, function() {
 		server.route({
 			method: ['POST'],
 			path: '/cold/set',		
-			config: { auth: 'jwt',cors:cors,validate: { 
+			config: { auth: false,cors:cors,
 				payload: { 
 					 output: 'data',
 					 parse:true				
-				} } },
+				} },
 			handler:  requestColdStorageSet
 		});	
 	}
