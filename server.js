@@ -1,7 +1,6 @@
 'use strict';
 
 const Hapi = require('hapi');
-const Joi = require('joi');
 const StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
@@ -18,10 +17,6 @@ var node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
 startStopDaemon(options, function() {
 
-	function boomify (error) {
-	  // I'm using globals for some things (like sequelize), you should replace it with your sequelize instance
-		return
-	}
 
 	 var cors= {
 			origin: ['*'],
@@ -30,13 +25,13 @@ startStopDaemon(options, function() {
         
 	function loginHandler(request,reply)  {
 		var extid="";
-		if(typeof request.payload.extid=="undefined") {
+		if((typeof request.payload=="undefined")||(request.payload==null)||(request.payload.extid==null)) {
 			extid=request.params.extid;
 		} else {
 			extid=request.payload.extid;
 		}
 		var extsecret=Math.random();
-		if(typeof request.payload.secret=="undefined") {
+		if((request.payload==null)||(typeof request.payload.secret=="undefined")) {
 			extsecret=request.params.secret;
 		} else {
 			extsecret=request.payload.secret;
@@ -80,13 +75,19 @@ startStopDaemon(options, function() {
 
 	function requestColdStorageSet(request,reply) {
 		var account=request.extid;
+		var bucket=Math.random();
+		var obj="";
+		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+			bucket=request.query.secret;
+			obj=request.query.obj;
+		} else {
+			bucket=request.payload.secret;
+			obj=request.payload.obj;
+		}	
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		console.log("coldSet",request.payload,request);
-		node.coldstorage().then(function(coldstorage) {
-				coldstorage.setObj(request.payload.bucket,request.payload.obj).then(function (o) {
-						reply(JSON.stringify(request.payload.obj));
-				});
-		});
+		node.storage.setItemSync(account+"_"+bucket,obj);
+		console.log(request);
+		reply(obj);
 	}
 
 	function requestColdStorageGet(request,reply) {
@@ -98,7 +99,7 @@ startStopDaemon(options, function() {
 				});
 		});
 	}
-	
+
 	function requestHandler(request,reply) {
 		var account=request.extid;
 		var shift=1;
@@ -165,6 +166,9 @@ startStopDaemon(options, function() {
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
 		var names=Object.getOwnPropertyNames(node);
 		var html="";
+		
+
+		
 		for(var i=0;i<names.length;i++) {
 			if(names[i].indexOf('_')) {
 				var active_class=names[i];	
@@ -204,23 +208,20 @@ startStopDaemon(options, function() {
 			path: '/api/auth',		
 			config: { auth: false,cors:cors },
 			handler:  loginHandler
-		});			
+		});		
 		server.route({
-			method: ['POST'],
-			path: '/cold/get',		
+			method:  ['GET','POST'],
+			path: '/api/cold/get/',		
 			config: { auth: 'jwt',cors:cors },
 			handler:  requestColdStorageGet
 		});	
 		server.route({
-			method: ['POST'],
-			path: '/cold/set',		
-			config: { auth: false,cors:cors,
-				payload: { 
-					 output: 'data',
-					 parse:true				
-				} },
-			handler:  requestColdStorageSet
+			method:  ['GET','POST'],
+			path: '/api/cold/set/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler: requestColdStorageSet
 		});	
+
 	}
 
 
@@ -266,15 +267,6 @@ startStopDaemon(options, function() {
 		
 	});
 
-	server.ext('onPreResponse', (request, reply) => {
-	  // Transform only server errors 
-	  if (request.response.isBoom && request.response.isServer) {
-		reply(boomify(request.response))
-	  } else {
-		// Otherwise just continue with previous response
-		reply.continue()
-	  }
-	});
 
 	server.start((err) => {
 
