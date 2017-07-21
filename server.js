@@ -20,17 +20,7 @@ startStopDaemon(options, function() {
 
 	function boomify (error) {
 	  // I'm using globals for some things (like sequelize), you should replace it with your sequelize instance
-	  if (error instanceof Core.db.sequelize.UniqueConstraintError) {
-		let be = Boom.create(400, `child "${error.errors[0].path}" fails because ["${error.errors[0].path}" must be unique]`)
-		be.output.payload.validation = {
-		  source: 'payload',
-		  keys: error.errors.map(e => e.path)
-		}
-		return be
-	  } else {
-		// If error wasn't found, return default boom internal error
-		return Boom.internal('An internal server error', error)
-	  }
+		return
 	}
 
 	 var cors= {
@@ -91,6 +81,7 @@ startStopDaemon(options, function() {
 	function requestColdStorageSet(request,reply) {
 		var account=request.extid;
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		console.log("coldSet",request.payload);
 		node.coldstorage().then(function(coldstorage) {
 				coldstorage.setObj(request.payload.bucket,request.payload.obj).then(function (o) {
 						reply(JSON.stringify(request.payload.obj));
@@ -225,8 +216,8 @@ startStopDaemon(options, function() {
 			path: '/cold/set',		
 			config: { auth: 'jwt',cors:cors,validate: { 
 				payload: { 
-					bucket: Joi.string().min(1).required(), 
-					obj: Joi.string().min(1).required(),					
+					 output: 'data',
+					 parse:true				
 				} } },
 			handler:  requestColdStorageSet
 		});	
