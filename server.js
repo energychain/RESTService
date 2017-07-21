@@ -78,10 +78,10 @@ startStopDaemon(options, function() {
 		var bucket=Math.random();
 		var obj="";
 		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
-			bucket=request.query.secret;
+			bucket=request.query.bucket;
 			obj=request.query.obj;
 		} else {
-			bucket=request.payload.secret;
+			bucket=request.payload.bucket;
 			obj=request.payload.obj;
 		}	
 		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
@@ -95,7 +95,7 @@ startStopDaemon(options, function() {
 		var req="";
 		var bucket="";		
 		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
-			bucket=request.query.secret;
+			bucket=request.query.bucket;
 			req=request.query.address;
 		}
 		var obj=node.storage.getItemSync(req+"_"+bucket);
@@ -213,7 +213,7 @@ startStopDaemon(options, function() {
 		});		
 		server.route({
 			method:  ['GET','POST'],
-			path: '/api/cold/get/',		
+			path: '/api/cold/get/{args*}',		
 			config: { auth: 'jwt',cors:cors },
 			handler:  requestColdStorageGet
 		});	
