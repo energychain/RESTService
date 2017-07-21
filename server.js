@@ -96,7 +96,7 @@ startStopDaemon(options, function() {
 		var bucket="";		
 		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
 			bucket=request.query.bucket;
-			req=request.query.address;
+			req=request.query.account;
 		}
 		var obj=node.storage.getItemSync(req+"_"+bucket);
 		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
