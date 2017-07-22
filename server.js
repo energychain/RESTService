@@ -5,6 +5,7 @@ const StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
+var cache={};
 
  var options = {
     outFile: 'restservice.out.log',   
@@ -22,6 +23,8 @@ startStopDaemon(options, function() {
 			origin: ['*'],
 			additionalHeaders: ['cache-control', 'x-requested-with']
 		};
+        
+
         
 	function loginHandler(request,reply)  {
 		var extid="";
@@ -84,8 +87,7 @@ startStopDaemon(options, function() {
 			bucket=request.payload.bucket;
 			obj=request.payload.obj;
 		}	
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		console.log("SET",node.wallet.address+"_"+bucket,obj);
+		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 		node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
 		reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
 	}
@@ -99,12 +101,63 @@ startStopDaemon(options, function() {
 			bucket=request.query.bucket;
 			req=request.query.account;
 		}
-		var obj=node.storage.getItemSync(req+"_"+bucket);
-		console.log("GET",req+"_"+bucket,obj);
+		var obj=node.storage.getItemSync(req+"_"+bucket);		
 		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
 	}
-
+	
+	
+	const boAccess = function (extid, path,next) {
+					var account=extid;
+					var shift=1;
+					
+					var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+					var r=path.split("/");
+					if(r.length<5) reply("ERROR");
+					 
+					var r_class=r[2];
+					var r_address=r[3];
+					var r_method=r[4];
+					
+					var cargs=[];
+					if(r_address!="0x0") cargs.push(r_address);				
+					
+					var margs=[];
+					
+					for(var i=4+shift;i<r.length;i++) {
+							margs.push(r[i]);
+					}
+					node[r_class].apply(this,cargs).then(function(x) {					
+								x[r_method].apply(this,margs).then(function(res) {
+										next(null,JSON.stringify(res));					
+								}).catch(next(null,JSON.stringify({status:error})));					
+					});	
+	};
+	
+	function boCache(obj,next) {
+			if((typeof cache[obj.id] !="undefined")&&(cache[obj.id].expires>new Date())) {
+				console.log("CACHE");
+				next(cache[obj.id].obj);	
+			}	else {
+				boAccess(obj.account,obj.path,function(e,r) {
+						console.log("NO Cache");
+						console.log(r);
+						var cacheitem={};
+						cacheitem.expires=new Date()+(10*60000);
+						cacheitem.obj=r;
+						cache[obj.id]=cacheitem;
+						next(r);					
+				});
+			}		
+	};
+	
 	function requestHandler(request,reply) {
+		var account=request.extid;
+		var path=request.path;
+		
+		const id = account + ':' + path;
+        boCache({ id: id, account: account, path: path }, reply);
+	}
+	function requestHandlerNoCache(request,reply) {
 		var account=request.extid;
 		var shift=1;
 		
@@ -124,14 +177,10 @@ startStopDaemon(options, function() {
 		for(var i=4+shift;i<r.length;i++) {
 				margs.push(r[i]);
 		}
-		node[r_class].apply(this,cargs).then(function(x) {
-					//reply("DONE");
-					console.log(margs);
-					
+		node[r_class].apply(this,cargs).then(function(x) {					
 					x[r_method].apply(this,margs).then(function(res) {
 							reply(JSON.stringify(res));					
-					});
-					
+					}).catch(reply(JSON.stringify({status:error})));					
 		});			
 	}
 
@@ -272,6 +321,8 @@ startStopDaemon(options, function() {
 	});
 
 
+	
+	
 	server.start((err) => {
 
 		if (err) {
