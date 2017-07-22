@@ -175,13 +175,7 @@ startStopDaemon(options, function() {
         boCache({ id: id, account: account, path: path }, reply);
         if(cntR>5) {
 			server.stop({ timeout: 10000 }).then(function (err) {
-				server.start((err) => {
-
-					if (err) {
-						throw err;
-					}
-					console.log(`Server running at: ${server.info.uri}`);
-				});
+				startStopDaemon.restart();
 			 });
 		}
 	}
