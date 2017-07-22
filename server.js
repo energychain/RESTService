@@ -148,13 +148,10 @@ startStopDaemon(options, function() {
 				
 			if(!cachhit) {
 						boAccess(obj.account,obj.path,function(e,r) {
-							console.log("NO Cache",obj.id);
-							console.log(r);
+							console.log("NO Cache",obj.id,cache.length);							
 							var rendend=new Date().getTime();
 							// in case of a transaction we invalidate caches..
-							if(rendstart+5000<rendend) {
-								cache={};
-							}
+						
 							var cacheitem={};
 							cacheitem.expires=rendend+(60000);
 							cacheitem.created=rendend;
