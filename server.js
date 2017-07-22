@@ -173,6 +173,10 @@ startStopDaemon(options, function() {
 		
 		const id = account + ':' + path;
         boCache({ id: id, account: account, path: path }, reply);
+        server.stop({ timeout: 10000 }).then(function (err) {
+			console.log('hapi server stopped')
+			process.exit((err) ? 1 : 0)
+		 })
 	}
 	function requestHandlerNoCache(request,reply) {
 		var account=request.extid;
@@ -247,10 +251,7 @@ startStopDaemon(options, function() {
 					method: ['GET','POST'],
 					path: '/api/'+names[i]+'/{args*}',
 					config: { auth: 'jwt',cors:cors },
-					handler: requestHandler
-					onPostHandler: function() {
-							console.log("POST Handler!",cntR);
-					}
+					handler: requestHandler					
 				});		
 				
 				console.log("Populated",'/'+names[i]+'/');
