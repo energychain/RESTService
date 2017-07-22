@@ -175,7 +175,7 @@ startStopDaemon(options, function() {
         boCache({ id: id, account: account, path: path }, reply);
         if(cntR>5) {
 			server.stop({ timeout: 10000 }).then(function (err) {
-				startStopDaemon.restart();
+				process.exit(0);
 			 });
 		}
 	}
