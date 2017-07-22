@@ -5,7 +5,7 @@ const StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
-var cache={};
+
 
  var options = {
     outFile: 'restservice.out.log',   
@@ -18,7 +18,8 @@ var node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
 startStopDaemon(options, function() {
 
-
+	var cache={};
+	
 	 var cors= {
 			origin: ['*'],
 			additionalHeaders: ['cache-control', 'x-requested-with']
@@ -106,7 +107,7 @@ startStopDaemon(options, function() {
 	}
 	
 	
-	function boAccess(extid, path,next) {
+	const boAccess=function(extid, path,next) {
 					var account=extid;
 					var shift=1;
 					
@@ -128,8 +129,8 @@ startStopDaemon(options, function() {
 					}
 					node[r_class].apply(this,cargs).then(function(x) {					
 								x[r_method].apply(this,margs).then(function(res) {
-										next(null,JSON.stringify(res));					
-								}).catch(next(null,JSON.stringify({status:error})));					
+										next(null,JSON.stringify(res),node);					
+								}).catch(next(null,JSON.stringify({status:error}),node));					
 					});	
 	};
 	
@@ -147,8 +148,8 @@ startStopDaemon(options, function() {
 			var rendstart = new Date().getTime();
 				
 			if(!cachhit) {
-						boAccess(obj.account,obj.path,function(e,r) {
-							console.log("NO Cache",obj.id,cache.length);							
+						boAccess(obj.account,obj.path,function(e,r,o) {
+							console.log("NO Cache",obj.id);							
 							var rendend=new Date().getTime();
 							// in case of a transaction we invalidate caches..
 						
@@ -157,6 +158,7 @@ startStopDaemon(options, function() {
 							cacheitem.created=rendend;
 							cacheitem.obj=r;
 							cache[obj.id]=cacheitem;
+							o=undefined;
 							next(r);					
 						});
 			}		
