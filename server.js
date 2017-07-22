@@ -175,8 +175,13 @@ startStopDaemon(options, function() {
         boCache({ id: id, account: account, path: path }, reply);
         if(cntR>5) {
 			server.stop({ timeout: 10000 }).then(function (err) {
-				console.log('hapi server stopped',cntR)
-				server.start();
+				server.start((err) => {
+
+					if (err) {
+						throw err;
+					}
+					console.log(`Server running at: ${server.info.uri}`);
+				});
 			 });
 		}
 	}
