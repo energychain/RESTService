@@ -5,6 +5,7 @@ const StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
+var cntR=0;
 
 
  var options = {
@@ -110,6 +111,7 @@ startStopDaemon(options, function() {
 	const boAccess=function(extid, path,next) {
 					var account=extid;
 					var shift=1;
+					cntR++;
 					
 					var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
 					var r=path.split("/");
@@ -246,6 +248,9 @@ startStopDaemon(options, function() {
 					path: '/api/'+names[i]+'/{args*}',
 					config: { auth: 'jwt',cors:cors },
 					handler: requestHandler
+					onPostHandler: function() {
+							console.log("POST Handler!",cntR);
+					}
 				});		
 				
 				console.log("Populated",'/'+names[i]+'/');
@@ -263,7 +268,7 @@ startStopDaemon(options, function() {
 							
 							var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});					
 							reply(JSON.stringify(node.wallet.address));
-					}
+					}					
 		});		
 		server.route({
 			method: ['GET'],
@@ -345,5 +350,6 @@ startStopDaemon(options, function() {
 		}
 		console.log(`Server running at: ${server.info.uri}`);
 	});
-
+	
+	
 });
