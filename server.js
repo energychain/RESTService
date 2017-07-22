@@ -173,10 +173,12 @@ startStopDaemon(options, function() {
 		
 		const id = account + ':' + path;
         boCache({ id: id, account: account, path: path }, reply);
-        server.stop({ timeout: 10000 }).then(function (err) {
-			console.log('hapi server stopped',cntR)
-			process.exit((err) ? 1 : 0)
-		 })
+        if(cntR>5) {
+			server.stop({ timeout: 10000 }).then(function (err) {
+				console.log('hapi server stopped',cntR)
+				server.start();
+			 });
+		}
 	}
 	function requestHandlerNoCache(request,reply) {
 		var account=request.extid;
