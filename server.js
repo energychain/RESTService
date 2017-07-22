@@ -173,7 +173,7 @@ startStopDaemon(options, function() {
 		
 		const id = account + ':' + path;
         boCache({ id: id, account: account, path: path }, reply);
-        if(cntR>5) {
+        if(cntR>1000) {
 			server.stop({ timeout: 10000 }).then(function (err) {
 				process.exit(0);
 			 });
