@@ -106,7 +106,7 @@ startStopDaemon(options, function() {
 	}
 	
 	
-	const boAccess = function (extid, path,next) {
+	function boAccess(extid, path,next) {
 					var account=extid;
 					var shift=1;
 					
@@ -134,34 +134,41 @@ startStopDaemon(options, function() {
 	};
 	
 	function boCache(obj,next) {
-		var cachhit=false;
-		
+			var cachhit=false;
+				
 			if((typeof cache[obj.id] !="undefined")) {
 				cachhit=true;
-				var obj = cache[obj.id];
+				var item = cache[obj.id];
 				
-				if(obj.expires<new Date().getTime()) cachhit=false;
-				
+				if(item.expires<new Date().getTime()) cachhit=false;
+					
 				if(cachhit) next(cache[obj.id].obj);	
 			}
+			var rendstart = new Date().getTime();
 				
 			if(!cachhit) {
 						boAccess(obj.account,obj.path,function(e,r) {
-						console.log("NO Cache",obj.id);
-						console.log(r);
-						var cacheitem={};
-						cacheitem.expires=new Date().getTime()+(20000);
-						cacheitem.created=new Date().getTime();
-						cacheitem.obj=r;
-						cache[obj.id]=cacheitem;
-						next(r);					
-				});
+							console.log("NO Cache",obj.id);
+							console.log(r);
+							var rendend=new Date().getTime();
+							// in case of a transaction we invalidate caches..
+							if(rendstart+5000<rendend) {
+								cache={};
+							}
+							var cacheitem={};
+							cacheitem.expires=rendend+(120000);
+							cacheitem.created=rendend;
+							cacheitem.obj=r;
+							cache[obj.id]=cacheitem;
+							next(r);					
+						});
 			}		
 	};
 	
 	function requestHandler(request,reply) {
 		var account=request.extid;
 		var path=request.path;
+		if(typeof path == "undefined") path="";
 		
 		const id = account + ':' + path;
         boCache({ id: id, account: account, path: path }, reply);
