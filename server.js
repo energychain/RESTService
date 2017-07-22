@@ -134,15 +134,24 @@ startStopDaemon(options, function() {
 	};
 	
 	function boCache(obj,next) {
+		var cachhit=false;
+		
 			if((typeof cache[obj.id] !="undefined")) {
-				console.log("CACHE");
-				next(cache[obj.id].obj);	
-			}	else {
-				boAccess(obj.account,obj.path,function(e,r) {
+				cachhit=true;
+				var obj = cache[obj.id];
+				
+				if(obj.expires<new Date().getTime()) cachhit=false;
+				
+				if(cachhit) next(cache[obj.id].obj);	
+			}
+				
+			if(!cachhit) {
+						boAccess(obj.account,obj.path,function(e,r) {
 						console.log("NO Cache",obj.id);
 						console.log(r);
 						var cacheitem={};
-						cacheitem.expires=new Date().getTime()+(10*60000);
+						cacheitem.expires=new Date().getTime()+(20000);
+						cacheitem.created=new Date().getTime();
 						cacheitem.obj=r;
 						cache[obj.id]=cacheitem;
 						next(r);					
