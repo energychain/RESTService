@@ -156,7 +156,7 @@ startStopDaemon(options, function() {
 								cache={};
 							}
 							var cacheitem={};
-							cacheitem.expires=rendend+(120000);
+							cacheitem.expires=rendend+(60000);
 							cacheitem.created=rendend;
 							cacheitem.obj=r;
 							cache[obj.id]=cacheitem;
