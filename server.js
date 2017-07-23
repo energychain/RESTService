@@ -45,7 +45,7 @@ const boAccess=function(extid, path,next) {
 };
 	
 const populateObject=function(server) {
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		var node= new StromDAOBO.Node({external_id:'1337',rpc:rpc,testMode:true});
 		var names=Object.getOwnPropertyNames(node);
 		var html="";
 		
