@@ -127,7 +127,7 @@ const loginHandler=function(request,reply)  {
 		extsecret=request.payload.secret;
 	}
 	
-	var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
+	//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
 	var secret=node.nodeWallet.address;		
 	var res={};				
 	if(node.storage.getItemSync("jwt_"+extid)!=null) {
@@ -174,14 +174,18 @@ const requestColdStorageSet=function(request,reply) {
 		bucket=request.payload.bucket;
 		obj=request.payload.obj;
 	}	
-	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	}
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
 }
 
 const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
-	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	}
 	var req="";
 	var bucket="";		
 	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
@@ -219,9 +223,7 @@ const requestHandler=function(request,reply) {
 	}
 	node[r_class].apply(this,cargs).then(function(x) {					
 				x[r_method].apply(this,margs).then(function(res) {
-						reply(JSON.stringify(res));
-						BO=undefined;
-						node=undefined;					
+						reply(JSON.stringify(res));				
 				}).catch(reply(JSON.stringify({status:error})));					
 	});			
 }
@@ -242,7 +244,7 @@ startStopDaemon(options, function() {
 			path: '/prices/{plz}/{ja}',
 			config: { auth: 'jwt',cors:cors },
 			handler:   function(request,reply)  {
-						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
+						//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
 						var cliOps = {
 									host: 'kleinerracker.brandseven.com',
 									port: 443,
@@ -293,7 +295,7 @@ startStopDaemon(options, function() {
 		if(err){
 		  console.log(err);
 		}
-		var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
+		//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
 		var secret=node.nodeWallet.address;
 		
 		server.auth.strategy('jwt', 'jwt',
