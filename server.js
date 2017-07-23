@@ -11,7 +11,7 @@ var cntR=0;
  var options = {
     outFile: 'restservice.out.log',   
     errFile: 'restservice.err.log',
-    max: 2 //the script will run 3 times at most 
+    max: 200000 //the script will run 3 times at most 
  };
  
 const node= new StromDAOBO.Node({external_id:"node",testMode:true});
@@ -232,14 +232,14 @@ const requestHandler=function(request,reply) {
 	const id = account + ':' + path;
 	boCache({ id: id, account: account, path: path }, reply);
 	if(cntR>5) {
-		/*
+		
 		server.stop({ timeout: 10000 }).then(function (err) {
 			process.exit(0);
 		 });
-		 * */
+	
 		 cache={};
 		 cntR=0;
-		 StromDAOBO = require('stromdao-businessobject');
+		 //StromDAOBO = require('stromdao-businessobject');
 	}
 }
 const requestHandlerNoCache=function(request,reply) {
