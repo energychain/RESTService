@@ -44,7 +44,67 @@ const boAccess=function(extid, path,next) {
 				});	
 };
 	
-	
+const populateObject=function(server) {
+		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		var names=Object.getOwnPropertyNames(node);
+		var html="";
+		
+
+		
+		for(var i=0;i<names.length;i++) {
+			if(names[i].indexOf('_')) {
+				var active_class=names[i];	
+				
+				server.route({
+					method: ['GET','POST'],
+					path: '/api/'+names[i]+'/{args*}',
+					config: { auth: 'jwt',cors:cors },
+					handler: requestHandler					
+				});		
+				
+				console.log("Populated",'/'+names[i]+'/');
+			}
+		}
+		server.route({
+			method: ['GET','POST'],
+			path: '/api/info/{extid}',
+			config: { auth: 'jwt',cors:cors },
+			handler:   function(request,reply)  {
+							var account="1337";
+							if(typeof request.params.extid != "undefined") {
+								account=request.params.extid;
+							}
+							
+							var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});					
+							reply(JSON.stringify(node.wallet.address));
+					}					
+		});		
+		server.route({
+			method: ['GET'],
+			path: '/api/auth/{extid}/{secret}',		
+			config: { auth: false,cors:cors },
+			handler:  loginHandler
+		});	
+		server.route({
+			method: ['POST'],
+			path: '/api/auth',		
+			config: { auth: false,cors:cors },
+			handler:  loginHandler
+		});		
+		server.route({
+			method:  ['GET','POST'],
+			path: '/api/cold/get/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler:  requestColdStorageGet
+		});	
+		server.route({
+			method:  ['GET','POST'],
+			path: '/api/cold/set/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler: requestColdStorageSet
+		});	
+
+	}	
 
 startStopDaemon(options, function() {
 
@@ -212,7 +272,7 @@ startStopDaemon(options, function() {
 		});			
 	}
 
-	function populateTarifService(server) {
+	const populateTarifService=function(server) {
 		
 		server.route({
 			method: ['GET','POST'],
@@ -243,67 +303,7 @@ startStopDaemon(options, function() {
 		
 	}
 
-	function populateObject(server) {
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		var names=Object.getOwnPropertyNames(node);
-		var html="";
-		
-
-		
-		for(var i=0;i<names.length;i++) {
-			if(names[i].indexOf('_')) {
-				var active_class=names[i];	
-				
-				server.route({
-					method: ['GET','POST'],
-					path: '/api/'+names[i]+'/{args*}',
-					config: { auth: 'jwt',cors:cors },
-					handler: requestHandler					
-				});		
-				
-				console.log("Populated",'/'+names[i]+'/');
-			}
-		}
-		server.route({
-			method: ['GET','POST'],
-			path: '/api/info/{extid}',
-			config: { auth: 'jwt',cors:cors },
-			handler:   function(request,reply)  {
-							var account="1337";
-							if(typeof request.params.extid != "undefined") {
-								account=request.params.extid;
-							}
-							
-							var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});					
-							reply(JSON.stringify(node.wallet.address));
-					}					
-		});		
-		server.route({
-			method: ['GET'],
-			path: '/api/auth/{extid}/{secret}',		
-			config: { auth: false,cors:cors },
-			handler:  loginHandler
-		});	
-		server.route({
-			method: ['POST'],
-			path: '/api/auth',		
-			config: { auth: false,cors:cors },
-			handler:  loginHandler
-		});		
-		server.route({
-			method:  ['GET','POST'],
-			path: '/api/cold/get/{args*}',		
-			config: { auth: 'jwt',cors:cors },
-			handler:  requestColdStorageGet
-		});	
-		server.route({
-			method:  ['GET','POST'],
-			path: '/api/cold/set/{args*}',		
-			config: { auth: 'jwt',cors:cors },
-			handler: requestColdStorageSet
-		});	
-
-	}
+	
 
 
 	const server = new Hapi.Server({		
