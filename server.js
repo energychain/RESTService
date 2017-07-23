@@ -14,8 +14,37 @@ var cntR=0;
     max: 2 //the script will run 3 times at most 
  };
  
-var node= new StromDAOBO.Node({external_id:"node",testMode:true});
+const node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
+const boAccess=function(extid, path,next) {
+				var account=extid;
+				var shift=1;
+				cntR++;
+				
+				var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+				var r=path.split("/");
+				if(r.length<5) reply("ERROR");
+				 
+				var r_class=r[2];
+				var r_address=r[3];
+				var r_method=r[4];
+				
+				var cargs=[];
+				if(r_address!="0x0") cargs.push(r_address);				
+				
+				var margs=[];
+				
+				for(var i=4+shift;i<r.length;i++) {
+						margs.push(r[i]);
+				}
+				node[r_class].apply(this,cargs).then(function(x) {					
+							x[r_method].apply(this,margs).then(function(res) {
+									next(null,JSON.stringify(res),node);					
+							}).catch(next(null,JSON.stringify({status:error}),node));					
+				});	
+};
+	
+	
 
 startStopDaemon(options, function() {
 
@@ -108,34 +137,7 @@ startStopDaemon(options, function() {
 	}
 	
 	
-	const boAccess=function(extid, path,next) {
-					var account=extid;
-					var shift=1;
-					cntR++;
-					
-					var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-					var r=path.split("/");
-					if(r.length<5) reply("ERROR");
-					 
-					var r_class=r[2];
-					var r_address=r[3];
-					var r_method=r[4];
-					
-					var cargs=[];
-					if(r_address!="0x0") cargs.push(r_address);				
-					
-					var margs=[];
-					
-					for(var i=4+shift;i<r.length;i++) {
-							margs.push(r[i]);
-					}
-					node[r_class].apply(this,cargs).then(function(x) {					
-								x[r_method].apply(this,margs).then(function(res) {
-										next(null,JSON.stringify(res),node);					
-								}).catch(next(null,JSON.stringify({status:error}),node));					
-					});	
-	};
-	
+
 	function boCache(obj,next) {
 			var cachhit=false;
 				
@@ -173,10 +175,13 @@ startStopDaemon(options, function() {
 		
 		const id = account + ':' + path;
         boCache({ id: id, account: account, path: path }, reply);
-        if(cntR>1000) {
+        if(cntR>5) {
+			/*
 			server.stop({ timeout: 10000 }).then(function (err) {
 				process.exit(0);
 			 });
+			 * */
+			 
 		}
 	}
 	function requestHandlerNoCache(request,reply) {
