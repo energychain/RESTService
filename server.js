@@ -224,7 +224,7 @@ const boCache=function(obj,next) {
 		}		
 };
 
-const requestHandler=function(request,reply) {
+const requestHandlerOld=function(request,reply) {
 	var account=request.extid;
 	var path=request.path;
 	if(typeof path == "undefined") path="";
@@ -243,7 +243,7 @@ const requestHandler=function(request,reply) {
 		 //StromDAOBO = require('stromdao-businessobject');
 	}
 }
-const requestHandlerNoCache=function(request,reply) {
+const requestHandler=function(request,reply) {
 	var account=request.extid;
 	var shift=1;
 	
