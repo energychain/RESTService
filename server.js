@@ -246,8 +246,8 @@ const requestHandlerOld=function(request,reply) {
 const requestHandler=function(request,reply) {
 	var account=request.extid;
 	var shift=1;
-	
-	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var BO = require('stromdao-businessobject');
+	var node= new BO.Node({external_id:account,rpc:rpc,testMode:true});
 	var r=request.path.split("/");
 	if(r.length<5) reply("ERROR");
 	 
@@ -265,7 +265,9 @@ const requestHandler=function(request,reply) {
 	}
 	node[r_class].apply(this,cargs).then(function(x) {					
 				x[r_method].apply(this,margs).then(function(res) {
-						reply(JSON.stringify(res));					
+						reply(JSON.stringify(res));
+						BO=undefined;
+						node=undefined;					
 				}).catch(reply(JSON.stringify({status:error})));					
 	});			
 }
