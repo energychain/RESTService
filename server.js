@@ -21,6 +21,8 @@ const cors= {
 			additionalHeaders: ['cache-control', 'x-requested-with']
 };
 
+var cache={};
+
 const boAccess=function(extid, path,next) {
 				var account=extid;
 				var shift=1;
