@@ -238,6 +238,7 @@ const requestHandler=function(request,reply) {
 		 });
 		 * */
 		 cache={};
+		 cntR=0;
 		 StromDAOBO = require('stromdao-businessobject');
 	}
 }
