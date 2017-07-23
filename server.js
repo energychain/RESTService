@@ -198,9 +198,10 @@ const requestColdStorageGet=function(request,reply) {
 const requestHandler=function(request,reply) {
 	var account=request.extid;
 	var shift=1;
-	console.log("EXTID in Node:",node.options.extid);
-	//var BO = require('stromdao-businessobject');
-	//var node= new BO.Node({external_id:account,rpc:rpc,testMode:true});
+	console.log("EXTID in Node:",node.options.external_id);
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	}
 	var r=request.path.split("/");
 	if(r.length<5) reply("ERROR");
 	 
