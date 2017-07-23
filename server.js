@@ -16,6 +16,11 @@ var cntR=0;
  
 const node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
+const cors= {
+			origin: ['*'],
+			additionalHeaders: ['cache-control', 'x-requested-with']
+};
+
 const boAccess=function(extid, path,next) {
 				var account=extid;
 				var shift=1;
@@ -110,10 +115,7 @@ startStopDaemon(options, function() {
 
 	var cache={};
 	
-	 var cors= {
-			origin: ['*'],
-			additionalHeaders: ['cache-control', 'x-requested-with']
-		};
+
         
 
         
