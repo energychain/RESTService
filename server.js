@@ -14,7 +14,7 @@ var cntR=0;
     max: 1 //the script will run 3 times at most 
  };
  
-const node= new StromDAOBO.Node({external_id:"node",testMode:true});
+var node= new StromDAOBO.Node({external_id:"node",testMode:true});
 
 const cors= {
 			origin: ['*'],
