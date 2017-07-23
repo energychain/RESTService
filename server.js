@@ -234,7 +234,8 @@ const requestHandler=function(request,reply) {
 	if(cntR>5) {
 		
 		server.stop({ timeout: 10000 }).then(function (err) {
-			server.start();
+			process.exit(0);
+			//server.start();			
 		 });
 		 process.exit(0);
 		 cache={};
