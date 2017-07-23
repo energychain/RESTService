@@ -111,7 +111,7 @@ const populateObject=function(server) {
 
 	}	
 
-cons loginHandler=function(request,reply)  {
+const loginHandler=function(request,reply)  {
 	var extid="";
 	if((typeof request.payload=="undefined")||(request.payload==null)||(request.payload.extid==null)) {
 		extid=request.params.extid;
