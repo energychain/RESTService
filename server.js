@@ -111,6 +111,161 @@ const populateObject=function(server) {
 
 	}	
 
+cons loginHandler=function(request,reply)  {
+	var extid="";
+	if((typeof request.payload=="undefined")||(request.payload==null)||(request.payload.extid==null)) {
+		extid=request.params.extid;
+	} else {
+		extid=request.payload.extid;
+	}
+	var extsecret=Math.random();
+	if((request.payload==null)||(typeof request.payload.secret=="undefined")) {
+		extsecret=request.params.secret;
+	} else {
+		extsecret=request.payload.secret;
+	}
+	
+	var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
+	var secret=node.nodeWallet.address;		
+	var res={};				
+	if(node.storage.getItemSync("jwt_"+extid)!=null) {
+				res.state="load";
+				if(node.storage.getItemSync("jwt_"+extid)!= extsecret) {
+					var JWT   = require('jsonwebtoken');
+					var obj   = { id:'demo' }; // object/info you want to sign						
+					
+					res.token = JWT.sign(obj, secret);										
+					res.auth =	"demo";
+					
+					reply(JSON.stringify(res));
+					return;
+				}
+	} else {
+		res.state="create";
+	}
+	node.storage.setItemSync("jwt_"+extid,extsecret);
+	var JWT   = require('jsonwebtoken');
+	var obj   = { id:extid }; // object/info you want to sign
+		
+	
+	res.token = JWT.sign(obj, secret);	
+	res.auth = "secret";
+									
+	reply(JSON.stringify(res));
+};
+
+const validate = function (decoded, request, callback) {
+	request.extid=decoded.id;
+	console.log(decoded);
+	return callback(null, true);
+		  
+};
+
+const requestColdStorageSet=function(request,reply) {
+	var account=request.extid;
+	var bucket=Math.random();
+	var obj="";
+	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+		bucket=request.query.bucket;
+		obj=request.query.obj;
+	} else {
+		bucket=request.payload.bucket;
+		obj=request.payload.obj;
+	}	
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
+	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+}
+
+const requestColdStorageGet=function(request,reply) {
+	var account=request.extid;
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var req="";
+	var bucket="";		
+	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+		bucket=request.query.bucket;
+		req=request.query.account;
+	}
+	var obj=node.storage.getItemSync(req+"_"+bucket);		
+	reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+}
+
+
+
+const boCache=function(obj,next) {
+		var cachhit=false;
+			
+		if((typeof cache[obj.id] !="undefined")) {
+			cachhit=true;
+			var item = cache[obj.id];
+			
+			if(item.expires<new Date().getTime()) cachhit=false;
+				
+			if(cachhit) next(cache[obj.id].obj);	
+		}
+		var rendstart = new Date().getTime();
+			
+		if(!cachhit) {
+					boAccess(obj.account,obj.path,function(e,r,o) {
+						console.log("NO Cache",obj.id);							
+						var rendend=new Date().getTime();
+						// in case of a transaction we invalidate caches..
+					
+						var cacheitem={};
+						cacheitem.expires=rendend+(60000);
+						cacheitem.created=rendend;
+						cacheitem.obj=r;
+						cache[obj.id]=cacheitem;
+						o=undefined;
+						next(r);					
+					});
+		}		
+};
+
+const requestHandler=function(request,reply) {
+	var account=request.extid;
+	var path=request.path;
+	if(typeof path == "undefined") path="";
+	
+	const id = account + ':' + path;
+	boCache({ id: id, account: account, path: path }, reply);
+	if(cntR>5) {
+		/*
+		server.stop({ timeout: 10000 }).then(function (err) {
+			process.exit(0);
+		 });
+		 * */
+		 cache={};
+		 StromDAOBO = require('stromdao-businessobject');
+	}
+}
+const requestHandlerNoCache=function(request,reply) {
+	var account=request.extid;
+	var shift=1;
+	
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var r=request.path.split("/");
+	if(r.length<5) reply("ERROR");
+	 
+	var r_class=r[2];
+	var r_address=r[3];
+	var r_method=r[4];
+	
+	var cargs=[];
+	if(r_address!="0x0") cargs.push(r_address);				
+	
+	var margs=[];
+	
+	for(var i=4+shift;i<r.length;i++) {
+			margs.push(r[i]);
+	}
+	node[r_class].apply(this,cargs).then(function(x) {					
+				x[r_method].apply(this,margs).then(function(res) {
+						reply(JSON.stringify(res));					
+				}).catch(reply(JSON.stringify({status:error})));					
+	});			
+}
+
 startStopDaemon(options, function() {
 
 	var cache={};
@@ -119,160 +274,6 @@ startStopDaemon(options, function() {
         
 
         
-	function loginHandler(request,reply)  {
-		var extid="";
-		if((typeof request.payload=="undefined")||(request.payload==null)||(request.payload.extid==null)) {
-			extid=request.params.extid;
-		} else {
-			extid=request.payload.extid;
-		}
-		var extsecret=Math.random();
-		if((request.payload==null)||(typeof request.payload.secret=="undefined")) {
-			extsecret=request.params.secret;
-		} else {
-			extsecret=request.payload.secret;
-		}
-		
-		var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
-		var secret=node.nodeWallet.address;		
-		var res={};				
-		if(node.storage.getItemSync("jwt_"+extid)!=null) {
-					res.state="load";
-					if(node.storage.getItemSync("jwt_"+extid)!= extsecret) {
-						var JWT   = require('jsonwebtoken');
-						var obj   = { id:'demo' }; // object/info you want to sign						
-						
-						res.token = JWT.sign(obj, secret);										
-						res.auth =	"demo";
-						
-						reply(JSON.stringify(res));
-						return;
-					}
-		} else {
-			res.state="create";
-		}
-		node.storage.setItemSync("jwt_"+extid,extsecret);
-		var JWT   = require('jsonwebtoken');
-		var obj   = { id:extid }; // object/info you want to sign
-			
-		
-		res.token = JWT.sign(obj, secret);	
-		res.auth = "secret";
-										
-		reply(JSON.stringify(res));
-	};
-	
-	var validate = function (decoded, request, callback) {
-		request.extid=decoded.id;
-		console.log(decoded);
-		return callback(null, true);
-			  
-	};
-
-	function requestColdStorageSet(request,reply) {
-		var account=request.extid;
-		var bucket=Math.random();
-		var obj="";
-		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
-			bucket=request.query.bucket;
-			obj=request.query.obj;
-		} else {
-			bucket=request.payload.bucket;
-			obj=request.payload.obj;
-		}	
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
-		node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
-		reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
-	}
-
-	function requestColdStorageGet(request,reply) {
-		var account=request.extid;
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		var req="";
-		var bucket="";		
-		if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
-			bucket=request.query.bucket;
-			req=request.query.account;
-		}
-		var obj=node.storage.getItemSync(req+"_"+bucket);		
-		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
-	}
-	
-	
-
-	function boCache(obj,next) {
-			var cachhit=false;
-				
-			if((typeof cache[obj.id] !="undefined")) {
-				cachhit=true;
-				var item = cache[obj.id];
-				
-				if(item.expires<new Date().getTime()) cachhit=false;
-					
-				if(cachhit) next(cache[obj.id].obj);	
-			}
-			var rendstart = new Date().getTime();
-				
-			if(!cachhit) {
-						boAccess(obj.account,obj.path,function(e,r,o) {
-							console.log("NO Cache",obj.id);							
-							var rendend=new Date().getTime();
-							// in case of a transaction we invalidate caches..
-						
-							var cacheitem={};
-							cacheitem.expires=rendend+(60000);
-							cacheitem.created=rendend;
-							cacheitem.obj=r;
-							cache[obj.id]=cacheitem;
-							o=undefined;
-							next(r);					
-						});
-			}		
-	};
-	
-	function requestHandler(request,reply) {
-		var account=request.extid;
-		var path=request.path;
-		if(typeof path == "undefined") path="";
-		
-		const id = account + ':' + path;
-        boCache({ id: id, account: account, path: path }, reply);
-        if(cntR>5) {
-			/*
-			server.stop({ timeout: 10000 }).then(function (err) {
-				process.exit(0);
-			 });
-			 * */
-			 cache={};
-			 StromDAOBO = require('stromdao-businessobject');
-		}
-	}
-	function requestHandlerNoCache(request,reply) {
-		var account=request.extid;
-		var shift=1;
-		
-		var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
-		var r=request.path.split("/");
-		if(r.length<5) reply("ERROR");
-		 
-		var r_class=r[2];
-		var r_address=r[3];
-		var r_method=r[4];
-		
-		var cargs=[];
-		if(r_address!="0x0") cargs.push(r_address);				
-		
-		var margs=[];
-		
-		for(var i=4+shift;i<r.length;i++) {
-				margs.push(r[i]);
-		}
-		node[r_class].apply(this,cargs).then(function(x) {					
-					x[r_method].apply(this,margs).then(function(res) {
-							reply(JSON.stringify(res));					
-					}).catch(reply(JSON.stringify({status:error})));					
-		});			
-	}
 
 	const populateTarifService=function(server) {
 		
