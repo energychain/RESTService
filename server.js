@@ -11,7 +11,7 @@ var cntR=0;
  var options = {
     outFile: 'restservice.out.log',   
     errFile: 'restservice.err.log',
-    max: 200000 //the script will run 3 times at most 
+    max: 1 //the script will run 3 times at most 
  };
  
 const node= new StromDAOBO.Node({external_id:"node",testMode:true});
@@ -233,7 +233,7 @@ const requestHandler=function(request,reply) {
 	boCache({ id: id, account: account, path: path }, reply);
 	if(cntR>5) {
 		
-		server.stop({ timeout: 10000 }).then(function (err) {
+		server.stop({ timeout: 1000 }).then(function (err) {
 			process.exit(0);
 			//server.start();			
 		 });
