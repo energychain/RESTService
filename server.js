@@ -1,7 +1,7 @@
 'use strict';
 
 const Hapi = require('hapi');
-const StromDAOBO = require('stromdao-businessobject');
+var StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
@@ -181,7 +181,8 @@ startStopDaemon(options, function() {
 				process.exit(0);
 			 });
 			 * */
-			 
+			 cache={};
+			 StromDAOBO = require('stromdao-businessobject');
 		}
 	}
 	function requestHandlerNoCache(request,reply) {
