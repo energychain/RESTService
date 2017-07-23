@@ -194,60 +194,12 @@ const requestColdStorageGet=function(request,reply) {
 
 
 
-const boCache=function(obj,next) {
-		var cachhit=false;
-			
-		if((typeof cache[obj.id] !="undefined")) {
-			cachhit=true;
-			var item = cache[obj.id];
-			
-			if(item.expires<new Date().getTime()) cachhit=false;
-				
-			if(cachhit) next(cache[obj.id].obj);	
-		}
-		var rendstart = new Date().getTime();
-			
-		if(!cachhit) {
-					boAccess(obj.account,obj.path,function(e,r,o) {
-						console.log("NO Cache",obj.id);							
-						var rendend=new Date().getTime();
-						// in case of a transaction we invalidate caches..
-					
-						var cacheitem={};
-						cacheitem.expires=rendend+(60000);
-						cacheitem.created=rendend;
-						cacheitem.obj=r;
-						cache[obj.id]=cacheitem;
-						o=undefined;
-						next(r);					
-					});
-		}		
-};
 
-const requestHandlerOld=function(request,reply) {
-	var account=request.extid;
-	var path=request.path;
-	if(typeof path == "undefined") path="";
-	
-	const id = account + ':' + path;
-	boCache({ id: id, account: account, path: path }, reply);
-	if(cntR>5) {
-		
-		server.stop({ timeout: 1000 }).then(function (err) {
-			process.exit(0);
-			//server.start();			
-		 });
-		 process.exit(0);
-		 cache={};
-		 cntR=0;
-		 //StromDAOBO = require('stromdao-businessobject');
-	}
-}
 const requestHandler=function(request,reply) {
 	var account=request.extid;
 	var shift=1;
-	var BO = require('stromdao-businessobject');
-	var node= new BO.Node({external_id:account,rpc:rpc,testMode:true});
+	//var BO = require('stromdao-businessobject');
+	//var node= new BO.Node({external_id:account,rpc:rpc,testMode:true});
 	var r=request.path.split("/");
 	if(r.length<5) reply("ERROR");
 	 
