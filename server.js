@@ -234,9 +234,9 @@ const requestHandler=function(request,reply) {
 	if(cntR>5) {
 		
 		server.stop({ timeout: 10000 }).then(function (err) {
-			process.exit(0);
+			
 		 });
-	
+		process.exit(0);
 		 cache={};
 		 cntR=0;
 		 //StromDAOBO = require('stromdao-businessobject');
