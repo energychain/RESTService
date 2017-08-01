@@ -152,8 +152,17 @@ const loginHandler=function(request,reply)  {
 	
 	res.token = JWT.sign(obj, secret);	
 	res.auth = "secret";
-									
-	reply(JSON.stringify(res));
+	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
+		skp.balancesHaben(node.wallet.address).then(function(haben) {
+				res.haben=haben;
+				skp.balancesHaben(node.wallet.address).then(function(soll) {
+					res.soll=soll;
+					reply(JSON.stringify(res));
+				});
+		});
+		
+	})								
+	
 };
 
 const validate = function (decoded, request, callback) {
