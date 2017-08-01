@@ -155,7 +155,7 @@ const loginHandler=function(request,reply)  {
 	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
 		skp.balancesHaben(node.wallet.address).then(function(haben) {
 				res.haben=haben;
-				skp.balancesHaben(node.wallet.address).then(function(soll) {
+				skp.balancesSoll(node.wallet.address).then(function(soll) {
 					res.soll=soll;
 					reply(JSON.stringify(res));
 				});
