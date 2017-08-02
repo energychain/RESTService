@@ -260,6 +260,7 @@ startStopDaemon(options, function() {
 				}, function(err, charge) {
 				  var res={};
 				  if(charge.paid) {
+						console.log("Payment Account",node.wallet.address);
 						node.stromkonto("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(sko) {
 							sko.addTx("0x0013ab4e15A14B97D517e75fb7F6f9fF13514e30",request.payload.account,request.payload.amount,0).then(function(tx) {
 								res.tx=tx;							 
