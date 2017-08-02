@@ -1,5 +1,4 @@
 'use strict';
-
 const Hapi = require('hapi');
 var StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
@@ -242,9 +241,27 @@ startStopDaemon(options, function() {
 	var cache={};
 	
 
-        
-
-        
+    const populatePaymentService=function(server) {  
+		const stripe = require("stripe")(node.storage.getItemSync("stripe_secret"));
+		  
+		server.route({
+			method: ['GET','POST'],
+			path: '/payment/',
+			config: { cors:cors },
+			handler:   function(request,reply)  {
+				var token=request.param.stripeToken;
+				var charge = stripe.charges.create({
+				  amount: request.param.amount,
+				  currency: "eur",
+				  description: "Fury.Network access",
+				  source: token,
+				}, function(err, charge) {
+				  console.log("Charge CB",err,charge);
+				  reply(JSON.stringify(charge));
+				});
+			}			
+		});		
+	}    
 
 	const populateTarifService=function(server) {
 		
@@ -319,6 +336,7 @@ startStopDaemon(options, function() {
 
 		populateObject(server);
 		populateTarifService(server);
+		populatePaymentService(server);
 		
 	});
 
