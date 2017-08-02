@@ -249,7 +249,7 @@ startStopDaemon(options, function() {
 			path: '/payment/',
 			config: { cors:cors },
 			handler:   function(request,reply)  {
-				var token=request.param.stripeToken;
+				var token=request.params.stripeToken;
 				/*
 				var charge = stripe.charges.create({
 				  amount: request.param.amount,
