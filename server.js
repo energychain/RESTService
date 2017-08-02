@@ -252,7 +252,7 @@ startStopDaemon(options, function() {
 				var token=request.params.stripeToken;
 				
 				var charge = stripe.charges.create({
-				  amount: request.param.amount,
+				  amount: request.params.amount,
 				  currency: "eur",
 				  description: "Fury.Network access",
 				  source: token,
