@@ -250,7 +250,7 @@ startStopDaemon(options, function() {
 			config: { cors:cors },
 			handler:   function(request,reply)  {
 				var token=request.params.stripeToken;
-				/*
+				
 				var charge = stripe.charges.create({
 				  amount: request.param.amount,
 				  currency: "eur",
@@ -260,9 +260,10 @@ startStopDaemon(options, function() {
 				  console.log("Charge CB",err,charge);
 				  reply(JSON.stringify(charge));
 				});
-				*/
+				/*
 				 console.log("Charge CB",token);
 				 reply(JSON.stringify(token));
+				 */
 			}			
 		});		
 	}    
