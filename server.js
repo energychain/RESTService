@@ -263,8 +263,12 @@ startStopDaemon(options, function() {
 						console.log("Payment Account",node.wallet.address);
 						node.stromkonto("0x19BF166624F485f191d82900a5B7bc22Be569895").then(function(sko) {
 							sko.addTx("0x0013ab4e15A14B97D517e75fb7F6f9fF13514e30",request.payload.account,request.payload.amount,0).then(function(tx) {
-								res.tx=tx;							 
-							 reply(JSON.stringify(res));
+								res.tx=tx;		
+								if(typeof request.payload.redirect	!= "undefined") {
+									reply("<script>location.replace="+request.payload.redirect+";</script>");
+								} else {
+									reply(JSON.stringify(res));
+								}
 							});	
 						});					  
 				  } else {
