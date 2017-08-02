@@ -243,6 +243,7 @@ startStopDaemon(options, function() {
 
     const populatePaymentService=function(server) {  
 		const stripe = require("stripe")(node.storage.getItemSync("stripe_secret"));
+		console.log("Payment Account",node.wallet.address);
 		  
 		server.route({
 			method: ['GET','POST'],
@@ -257,8 +258,19 @@ startStopDaemon(options, function() {
 				  description: "Fury.Network access",
 				  source: token,
 				}, function(err, charge) {
-				  console.log("Charge CB",token,err,charge);
-				  reply(JSON.stringify(charge));
+				  var res={};
+				  if(charge.paid) {
+						node.stromkonto("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(sko) {
+							sko.addTx("0x0013ab4e15A14B97D517e75fb7F6f9fF13514e30",request.payload.account,request.payload.amount,0).then(function(tx) {
+								res.tx=tx;							 
+							 reply(JSON.stringify(res));
+							});	
+						});					  
+				  } else {
+						res.error="Failed";
+						reply(JSON.stringify(res));
+				  }
+				  
 				});
 				/*
 				 console.log("Charge CB",token);
