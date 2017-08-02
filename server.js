@@ -265,7 +265,7 @@ startStopDaemon(options, function() {
 							sko.addTx("0x0013ab4e15A14B97D517e75fb7F6f9fF13514e30",request.payload.account,request.payload.amount,0).then(function(tx) {
 								res.tx=tx;		
 								if(typeof request.payload.redirect	!= "undefined") {
-									reply("<script>location.replace="+request.payload.redirect+";</script>");
+									reply("<script>location.replace='"+request.payload.redirect+"';</script>");
 								} else {
 									reply(JSON.stringify(res));
 								}
