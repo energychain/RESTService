@@ -249,15 +249,15 @@ startStopDaemon(options, function() {
 			path: '/payment/',
 			config: { cors:cors },
 			handler:   function(request,reply)  {
-				var token=request.params.stripeToken;
+				var token=request.payload.stripeToken;
 				
 				var charge = stripe.charges.create({
-				  amount: request.params.amount,
+				  amount: request.payload.amount,
 				  currency: "eur",
 				  description: "Fury.Network access",
 				  source: token,
 				}, function(err, charge) {
-				  console.log("Charge CB",err,charge);
+				  console.log("Charge CB",token,err,charge);
 				  reply(JSON.stringify(charge));
 				});
 				/*
