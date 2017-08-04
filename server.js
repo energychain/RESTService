@@ -25,7 +25,7 @@ var cache={};
 var sendNotification = function(data) {
   var headers = {
     "Content-Type": "application/json; charset=utf-8",
-    "Authorization": "Basic NGEwMGZmMjItY2NkNy0xMWUzLTk5ZDUtMDAwYzI5NDBlNjJj"
+    "Authorization": "Basic "+node.storage.getItemSync("OSKEY")
   };
   
   var options = {
