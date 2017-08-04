@@ -22,6 +22,34 @@ const cors= {
 
 var cache={};
 
+var sendNotification = function(data) {
+  var headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Basic NGEwMGZmMjItY2NkNy0xMWUzLTk5ZDUtMDAwYzI5NDBlNjJj"
+  };
+  
+  var options = {
+    host: "onesignal.com",
+    port: 443,
+    path: "/api/v1/notifications",
+    method: "POST",
+    headers: headers
+  };
+  
+  var https = require('https');
+  var req = https.request(options, function(res) {  
+    res.on('data', function(data) {
+    });
+  });
+  
+  req.on('error', function(e) {
+    
+  });
+  
+  req.write(JSON.stringify(data));
+  req.end();
+};
+
 const boAccess=function(extid, path,next) {
 				var account=extid;
 				var shift=1;
@@ -201,7 +229,17 @@ const requestColdStorageGet=function(request,reply) {
 		req=request.query.account;
 	}
 	var obj=node.storage.getItemSync(req+"_"+bucket);		
+	var message = { 
+	  app_id: "80282eb4-5cb2-4cba-b8a3-158fc66f20b8",
+	  contents: {"en": "Usage of "+req},
+	  filters: [
+			{"field": "tag", "key": req, "relation": "=", "value": "1"}
+		]
+	};
+
+	sendNotification(message);
 	reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+	
 }
 
 
