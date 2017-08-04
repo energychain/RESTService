@@ -221,6 +221,15 @@ const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		var message = { 
+		  app_id: "80282eb4-5cb2-4cba-b8a3-158fc66f20b8",
+		  contents: {"en": node.options.external_id+" is using "+req},
+		  filters: [
+				{"field": "tag", "key": req, "relation": "=", "value": "1"}
+			]
+		};
+
+		sendNotification(message);
 	}
 	var req="";
 	var bucket="";		
@@ -229,15 +238,7 @@ const requestColdStorageGet=function(request,reply) {
 		req=request.query.account;
 	}
 	var obj=node.storage.getItemSync(req+"_"+bucket);		
-	var message = { 
-	  app_id: "80282eb4-5cb2-4cba-b8a3-158fc66f20b8",
-	  contents: {"en": "Usage of "+req},
-	  filters: [
-			{"field": "tag", "key": req, "relation": "=", "value": "1"}
-		]
-	};
-
-	sendNotification(message);
+	
 	reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
 	
 }
