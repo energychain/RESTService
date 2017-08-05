@@ -320,7 +320,7 @@ const requestColdStorageGet=function(request,reply) {
 		console.log("IPFS Hash",ipfshash);
 		var obj=[];
 		
-		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.html",function (err, stream) {
+		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.html",function (err, stream) {			
 			var file={
 				type: 'html',
 				name: 'html',
@@ -328,7 +328,7 @@ const requestColdStorageGet=function(request,reply) {
 				content:stream.toString()
 			};
 			obj.push(file);
-			console.log("IPFS Retrieve HTML",err,obj);
+			console.log("IPFS Retrieve HTML",err,obj,stream.toString());
 			ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.js",function (err, stream) {
 				var file={
 					type: 'js',
