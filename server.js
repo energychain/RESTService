@@ -241,8 +241,11 @@ const requestGistStorage=function(request,reply) {
     if((json.length>0)&&(typeof json[0].content != "undefined")) {
 		console.log("IN GIST");
 		
-		var gh = new require('github-api');
-		var quickgist = gh.getGist();
+		var GitHub =require('github-api');
+		const gh = new GitHub();
+		
+		let quickgist = gh.getGist(); // not a gist yet 
+	
 		var gistobj={};
 	
 		gistobj.description="Fury.Network - Snippet for STROMDAO Energy Blockchain";
