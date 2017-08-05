@@ -240,12 +240,14 @@ const requestGistStorage=function(request,reply) {
   
     if((json.length>0)&&(typeof json[0].content != "undefined")) {
 		console.log("IN GIST");
-		var quickGist = require('quick-gist');
+		
+		var gh = new require('github-api');
+		var quickgist = gh.getGist();
 		var gistobj={};
 	
-		gistobj.description="Fury.Network - Snippet for STROMDAO Energy Blockchain"
+		gistobj.description="Fury.Network - Snippet for STROMDAO Energy Blockchain";
 		gistobj.public=true;
-		gistobj.files={
+		gistobj.content={
 				"base.html":{
 					"content":json[0].content
 				},
@@ -253,8 +255,8 @@ const requestGistStorage=function(request,reply) {
 					"content":json[1].content
 				}
 		}
-		quickGist(gistobj, function(err, resp, data) {
-			console.log("QG",err,resp);
+		quickgist.create(gistobj).then( function(data) {
+			console.log("QG",data);
 			reply(JSON.stringify(data));
 		});		
 	} 
