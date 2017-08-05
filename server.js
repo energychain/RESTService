@@ -238,7 +238,8 @@ const requestGistStorage=function(request,reply) {
 	}
     var json=JSON.parse(obj);
   
-    if((json.length==2)&&(typeof json[0].content != "undefined")) {
+    if((json.length>0)&&(typeof json[0].content != "undefined")) {
+		console.log("IN GIST");
 		var quickGist = require('quick-gist');
 		var gistobj={};
 	
@@ -253,6 +254,7 @@ const requestGistStorage=function(request,reply) {
 				}
 		}
 		quickGist(gistobj, function(err, resp, data) {
+			console.log("QG",err,resp);
 			reply(JSON.stringify(data));
 		});		
 	} 
