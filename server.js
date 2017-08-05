@@ -238,9 +238,7 @@ const requestGistStorage=function(request,reply) {
 	}
     var json=JSON.parse(obj);
   
-    if((json.length>0)&&(typeof json[0].content != "undefined")) {
-		console.log("IN GIST");
-		
+    if((json.length>0)&&(typeof json[0].content != "undefined")) {				
 		var GitHub =require('github-api');
 		const gh = new GitHub();
 		
@@ -256,12 +254,17 @@ const requestGistStorage=function(request,reply) {
 				},
 				"base.js":{
 					"content":json[1].content
+				},
+				"user.json":{
+					"content":JSON.stringify({id:account,bucket:bucket})
 				}
 		}
 		console.log(gistobj);
 		quickgist.create(gistobj).then( function(data) {
-			console.log("QG",data);
-			reply(JSON.stringify(data));
+			var res={};
+			res.id=data.data.id;
+			res.account=account;			
+			reply(JSON.stringify(res));
 		});		
 	} 
 	
