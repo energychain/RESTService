@@ -7,16 +7,7 @@ var rpc="http://localhost:8540/rpc";
 var cntR=0;
 
 const IPFS = require("ipfs");
-const ipfsnode = new IPFS();
 
-ipfsnode.on('ready', () => {
-  // Your node is now ready to use \o/
-
-  // stopping a node
-  ipfsnode.stop(() => {
-    // node is now 'offline'
-  })
-})
 
 
  var options = {
@@ -496,5 +487,15 @@ startStopDaemon(options, function() {
 		
 	});
 	
+	const ipfsnode = new IPFS();
+
+	ipfsnode.on('ready', () => {
+	  // Your node is now ready to use \o/
+
+	  // stopping a node
+	  ipfsnode.stop(() => {
+		// node is now 'offline'
+	  })
+	})
 	
 });
