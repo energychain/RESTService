@@ -228,11 +228,11 @@ const requestColdStorageSet=function(request,reply) {
 			var ipfsobj=[];			
 			ipfsobj.push({
 					path:"/"+node.wallet.address+"/"+bucket+"/base.html",
-					content:new Buffer(json[0].content)
+					content:new Buffer(JSON.stringify(json[0].content))
 			});			
 			ipfsobj.push({
 					path:"/"+node.wallet.address+"/"+bucket+"/base.js",
-					content:new Buffer(json[1].content)
+					content:new Buffer(JSON.stringify(json[1].content))
 			});
 			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 				    // Replace bucket Info with ipfs Hash
