@@ -239,6 +239,8 @@ const requestColdStorageSet=function(request,reply) {
 					path:"/"+node.wallet.address+"/"+bucket+"/package.json",
 					content:new Buffer(JSON.stringify(obj))
 			});
+			var ipfsAPI = require('ipfs-api');
+			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 				    // Replace bucket Info with ipfs Hash
 				    obj = "ipfs://"+ipfsfiles[1].hash;
@@ -532,7 +534,6 @@ startStopDaemon(options, function() {
 		
 	});
 	
-	var ipfsAPI = require('ipfs-api');
-	var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
+
 	
 });
