@@ -258,6 +258,7 @@ const requestGistStorage=function(request,reply) {
 					"content":json[1].content
 				}
 		}
+		console.log(gistobj);
 		quickgist.create(gistobj).then( function(data) {
 			console.log("QG",data);
 			reply(JSON.stringify(data));
