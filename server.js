@@ -325,10 +325,17 @@ const requestColdStorageGet=function(request,reply) {
 				type: 'html',
 				name: 'html',
 				url: 'playground_base.html',
-				content:stream.toString()
+				content:""
 			};
-			obj.push(file);
-			console.log("IPFS Retrieve HTML",err,obj,stream);
+			 stream.on('data', function(chunk) {
+						file.content += chunk.toString('utf8');						
+			 });
+			 stream.on('finish',function() {
+					obj.push(file);
+					console.log("IPFS Retrieve HTML",err,obj);
+					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+		     });
+			/*
 			ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.js",function (err, stream) {
 				var file={
 					type: 'js',
@@ -339,6 +346,7 @@ const requestColdStorageGet=function(request,reply) {
 				obj.push(file);
 				reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
 			});
+			*/
 		});
 		
 	} else {
