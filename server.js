@@ -315,7 +315,7 @@ const requestColdStorageGet=function(request,reply) {
 		};
 
 	if(sendnote) sendNotification(message);
-	if(obj.substr(0,7)=="ipfs://") {
+	if((typeof obj!="undefined")&&(obj.substr(0,7)=="ipfs://")) {
 		var ipfshash=obj.substr(7,obj.length-7);
 		console.log("IPFS Hash",ipfshash);
 		var obj=[];
