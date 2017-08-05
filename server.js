@@ -8,7 +8,7 @@ var cntR=0;
 
 const IPFS = require("ipfs");
 
-
+var ipfsinstance={};
 
  var options = {
     outFile: 'restservice.out.log',   
@@ -234,7 +234,7 @@ const requestColdStorageSet=function(request,reply) {
 					path:"/"+node.wallet.address+"/"+bucket+"/base.js",
 					content:new Buffer(json[1].content)
 			});
-			ipfsnode.files.add(ipfsobj, function (err, files) {
+			ipfsinstance.files.add(ipfsobj, function (err, files) {
 					console.log("IPFS",err,files);
 			});
 	}
@@ -487,11 +487,11 @@ startStopDaemon(options, function() {
 		
 	});
 	
-	const ipfsnode = new IPFS();
+	ipfsnode = new IPFS();
 
 	ipfsnode.on('ready', () => {
 	  // Your node is now ready to use \o/
-
+			ipfsinstance=ipfsnode;
 	  // stopping a node
 	  ipfsnode.stop(() => {
 		// node is now 'offline'
