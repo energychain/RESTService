@@ -250,7 +250,7 @@ const requestGistStorage=function(request,reply) {
 	
 		gistobj.description="Fury.Network - Snippet for STROMDAO Energy Blockchain";
 		gistobj.public=true;
-		gistobj.content={
+		gistobj.files={
 				"base.html":{
 					"content":json[0].content
 				},
