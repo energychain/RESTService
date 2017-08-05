@@ -137,7 +137,12 @@ const populateObject=function(server) {
 			config: { auth: 'jwt',cors:cors },
 			handler: requestColdStorageSet
 		});	
-
+		server.route({
+			method:  ['GET','POST'],
+			path: '/api/gist/set/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler: requestGistStorage
+		});	
 	}	
 
 const loginHandler=function(request,reply)  {
@@ -215,6 +220,42 @@ const requestColdStorageSet=function(request,reply) {
 	}
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+}
+const requestGistStorage=function(request,reply) {
+	
+	var account=request.extid;
+	var bucket=Math.random();
+	var obj="";
+	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+		bucket=request.query.bucket;
+		obj=request.query.obj;
+	} else {
+		bucket=request.payload.bucket;
+		obj=request.payload.obj;
+	}	
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	}
+    var json=JSON.parse(obj);
+    if((json.length==2)&&(typeof json[0].content != undefined)) {
+		var quickGist = require('quick-gist');
+		var gistobj={};
+	
+		gistobj.description="Fury.Network - Snippet for STROMDAO Energy Blockchain"
+		gistobj.public=true;
+		gistobj.files={
+				"base.html":{
+					"content":json[0].content
+				},
+				"base.js":{
+					"content":json[1].content
+				}
+		}
+		quickGist(gistobj, function(err, resp, data) {
+			reply(JSON.stringify(data));
+		});		
+	} 
+	
 }
 
 const requestColdStorageGet=function(request,reply) {
