@@ -328,7 +328,7 @@ const requestColdStorageGet=function(request,reply) {
 				content:stream.toString()
 			};
 			obj.push(file);
-			console.log("IPFS Retrieve HTML",err,obj,stream.toString());
+			console.log("IPFS Retrieve HTML",err,obj,stream);
 			ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.js",function (err, stream) {
 				var file={
 					type: 'js',
