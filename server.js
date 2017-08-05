@@ -237,8 +237,8 @@ const requestGistStorage=function(request,reply) {
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
     var json=JSON.parse(obj);
-    console.log("GIST",obj,json);
-    if((json.length==2)&&(typeof json[0].content != undefined)) {
+  
+    if((json.length==2)&&(typeof json[0].content != "undefined")) {
 		var quickGist = require('quick-gist');
 		var gistobj={};
 	
