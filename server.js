@@ -8,6 +8,7 @@ var cntR=0;
 
 const IPFS = require("ipfs");
 
+
 var ipfsinstance={};
 
  var options = {
@@ -531,15 +532,7 @@ startStopDaemon(options, function() {
 		
 	});
 	
-	var ipfsnode = new IPFS();
-
-	ipfsnode.on('ready', () => {
-	  // Your node is now ready to use \o/
-			ipfsinstance=ipfsnode;
-	  // stopping a node
-	  ipfsnode.stop(() => {
-		// node is now 'offline'
-	  })
-	})
+	var ipfsAPI = require('ipfs-api');
+	var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 	
 });
