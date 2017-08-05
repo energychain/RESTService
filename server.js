@@ -242,9 +242,14 @@ const requestColdStorageSet=function(request,reply) {
 			var ipfsAPI = require('ipfs-api');
 			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
-				    // Replace bucket Info with ipfs Hash
-				    obj = "ipfs://"+ipfsfiles[1].hash;
-				    //node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);
+					var hash="";
+					for(var i=0;i<ipfsfiles.length;i++) {
+						if(ipfsfiles[i].path==node.wallet.address) {
+								hash=ipfsfiles[i].hash;
+						}					   
+					}
+				    obj = "ipfs://"+hash;
+				    node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);
 					console.log("IPFS",err,ipfsfiles);
 			});
 	}
@@ -334,27 +339,15 @@ const requestColdStorageGet=function(request,reply) {
 				url: 'playground_base.html',
 				content:""
 			};
+			 var data="";
 			 stream.on('data', function(chunk) {
-						file.content += chunk.toString('utf8');	
-						console.log(file.content);					
+						data += chunk.toString('utf8');							
 			 });
 			 stream.on('end',function() {
-					obj.push(file);
+					obj=JSON.parse(data);
 					console.log("IPFS Retrieve HTML",err,obj);
 					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
-		     });
-			/*
-			ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.js",function (err, stream) {
-				var file={
-					type: 'js',
-					name: 'js',
-					url: 'playground_base.js',
-					content:stream.toString()
-				};
-				obj.push(file);
-				reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
-			});
-			*/
+		     });			
 		});
 		
 	} else {
