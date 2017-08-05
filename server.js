@@ -234,7 +234,10 @@ const requestColdStorageSet=function(request,reply) {
 					path:"/"+node.wallet.address+"/"+bucket+"/base.js",
 					content:new Buffer(json[1].content)
 			});
-			ipfsinstance.files.add(ipfsobj, function (err, files) {
+			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
+				    // Replace bucket Info with ipfs Hash
+				    obj = "ipfs://"+ipfsfiles[1].hash;
+				    node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);
 					console.log("IPFS",err,files);
 			});
 	}
@@ -312,7 +315,34 @@ const requestColdStorageGet=function(request,reply) {
 		};
 
 	if(sendnote) sendNotification(message);
-	reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+	if(obj.substr(0,7)=="ipfs://") {
+		var ipfshash=obj.substr(7,obj.length-7);
+		console.log("IPFS Hash",ipfshash);
+		var obj=[];
+		
+		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.html",function (err, stream) {
+			var file={
+				type: 'html',
+				name: 'html',
+				url: 'playground_base.html',
+				content:stream.toString('utf8')
+			};
+			obj.push(file);
+			ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.js",function (err, stream) {
+				var file={
+					type: 'js',
+					name: 'js',
+					url: 'playground_base.js',
+					content:stream.toString('utf8')
+				};
+				obj.push(file);
+				reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+			});
+		});
+		
+	} else {
+		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+	}
 	
 }
 
