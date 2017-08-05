@@ -234,6 +234,10 @@ const requestColdStorageSet=function(request,reply) {
 					path:"/"+node.wallet.address+"/"+bucket+"/base.js",
 					content:new Buffer(JSON.stringify(json[1].content))
 			});
+			ipfsobj.push({
+					path:"/"+node.wallet.address+"/"+bucket+"/package.json",
+					content:new Buffer(JSON.stringify(obj))
+			});
 			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 				    // Replace bucket Info with ipfs Hash
 				    obj = "ipfs://"+ipfsfiles[1].hash;
@@ -320,7 +324,7 @@ const requestColdStorageGet=function(request,reply) {
 		console.log("IPFS Hash",ipfshash);
 		var obj=[];
 		
-		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/base.html",function (err, stream) {			
+		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/package.json",function (err, stream) {			
 			var file={
 				type: 'html',
 				name: 'html',
