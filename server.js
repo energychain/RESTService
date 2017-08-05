@@ -487,7 +487,7 @@ startStopDaemon(options, function() {
 		
 	});
 	
-	ipfsnode = new IPFS();
+	var ipfsnode = new IPFS();
 
 	ipfsnode.on('ready', () => {
 	  // Your node is now ready to use \o/
