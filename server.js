@@ -328,9 +328,10 @@ const requestColdStorageGet=function(request,reply) {
 				content:""
 			};
 			 stream.on('data', function(chunk) {
-						file.content += chunk.toString('utf8');						
+						file.content += chunk.toString('utf8');	
+						console.log(file.content);					
 			 });
-			 stream.on('finish',function() {
+			 stream.on('end',function() {
 					obj.push(file);
 					console.log("IPFS Retrieve HTML",err,obj);
 					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
