@@ -24,8 +24,10 @@
   "dependencies": {
     "hapi": "^16.4.3",
     "hapi-auth-jwt2": "^7.3.0",
+    "ipfs": "^0.25.1",
     "joi": "^10.6.0",
     "quick-gist": "^1.4.0",
+    "smokesignal": "^0.2.2",
     "start-stop-daemon": "^0.1.1",
     "stripe": "^4.23.1",
     "stromdao-businessobject": "^0.4.23",

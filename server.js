@@ -6,6 +6,18 @@ var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
 var cntR=0;
 
+const IPFS = require("ipfs");
+const ipfsnode = new IPFS();
+
+ipfsnode.on('ready', () => {
+  // Your node is now ready to use \o/
+
+  // stopping a node
+  ipfsnode.stop(() => {
+    // node is now 'offline'
+  })
+})
+
 
  var options = {
     outFile: 'restservice.out.log',   
@@ -218,9 +230,26 @@ const requestColdStorageSet=function(request,reply) {
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
-	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);		
+	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
+	
+	var json=JSON.parse(obj);
+	if((json.length>0)&&(typeof json[0].content != "undefined")) {
+			var ipfsobj=[];			
+			ipfsobj.push({
+					path:"/"+node.wallet.address+"/"+bucket+"/base.html",
+					content:new Buffer(json[0].content)
+			});			
+			ipfsobj.push({
+					path:"/"+node.wallet.address+"/"+bucket+"/base.js",
+					content:new Buffer(json[1].content)
+			});
+			ipfsnode.files.add(ipfsobj, function (err, files) {
+					console.log("IPFS",err,files);
+			});
+	}
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
 }
+
 const requestGistStorage=function(request,reply) {
 	
 	var account=request.extid;
@@ -236,7 +265,7 @@ const requestGistStorage=function(request,reply) {
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
-    var json=JSON.parse(obj);
+   
   
     if((json.length>0)&&(typeof json[0].content != "undefined")) {				
 		var GitHub =require('github-api');
@@ -266,8 +295,7 @@ const requestGistStorage=function(request,reply) {
 			res.account=account;			
 			reply(JSON.stringify(res));
 		});		
-	} 
-	
+	} 	
 }
 
 const requestColdStorageGet=function(request,reply) {
@@ -464,6 +492,8 @@ startStopDaemon(options, function() {
 			throw err;
 		}
 		console.log(`Server running at: ${server.info.uri}`);
+		
+		
 	});
 	
 	
