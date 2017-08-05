@@ -325,7 +325,7 @@ const requestColdStorageGet=function(request,reply) {
 				type: 'html',
 				name: 'html',
 				url: 'playground_base.html',
-				content:stream.toString('utf8')
+				content:stream.toString()
 			};
 			obj.push(file);
 			console.log("IPFS Retrieve HTML",err,obj);
@@ -334,7 +334,7 @@ const requestColdStorageGet=function(request,reply) {
 					type: 'js',
 					name: 'js',
 					url: 'playground_base.js',
-					content:stream.toString('utf8')
+					content:stream.toString()
 				};
 				obj.push(file);
 				reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
