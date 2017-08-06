@@ -337,7 +337,7 @@ const requestColdStorageGet=function(request,reply) {
 	if(obj==null) {
 		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
 	} else {
-	var json=JSON.parse(obj);	
+	var json=obj;	
 	if(typeof json.ipfshash!="undefined") {		
 		console.log("IPFS Hash",json.ipfshash);		
 		var ipfsAPI = require('ipfs-api');
