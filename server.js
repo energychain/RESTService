@@ -248,7 +248,7 @@ const requestColdStorageSet=function(request,reply) {
 						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/packaged.json") {
 								hash=ipfsfiles[i].hash;
 						}	
-						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/") {
+						if(ipfsfiles[i].path==node.wallet.address+"/"+bucket) {
 								root=ipfsfiles[i].hash;
 						}				   
 					}
