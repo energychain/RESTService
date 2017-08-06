@@ -243,12 +243,18 @@ const requestColdStorageSet=function(request,reply) {
 			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 			ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 					var hash="";
+					var root="";
 					for(var i=0;i<ipfsfiles.length;i++) {
-						if(ipfsfiles[i].path==node.wallet.address) {
+						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/packaged.json") {
 								hash=ipfsfiles[i].hash;
-						}					   
+						}	
+						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/"") {
+								root=ipfsfiles[i].hash;
+						}				   
 					}
-				    obj = "ipfs://"+hash;
+					var obj={}
+				    obj.ipfshash = hash;
+				    obj.ipfsroot= root;
 				    node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);
 					console.log("IPFS",err,ipfsfiles);
 			});
@@ -327,23 +333,21 @@ const requestColdStorageGet=function(request,reply) {
 		};
 
 	if(sendnote) sendNotification(message);
-	if((typeof obj!="undefined")&&(obj.substr(0,7)=="ipfs://")) {
-		var ipfshash=obj.substr(7,obj.length-7);
-		console.log("IPFS Hash",ipfshash);
-		var obj=[];
+	var json=JSON.parse(obj);
+	if(typeof json.ipfshash!="undefined") {		
+		console.log("IPFS Hash",json.ipfshash);		
 		var ipfsAPI = require('ipfs-api');
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 		var data="";
-		console.log("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json");
-		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json",function (err, stream) {			
+		console.log("/ipfs/"+ipfshash);
+		ipfsinstance.files.get("/ipfs/"+ipfshash,function (err, stream) {			
 			 stream.on('data', function(chunk) {
-						data = chunk;	
-						console.log("IPFS Retrieve Packaged",err,data);
-						obj=JSON.parse(data);						
-						reply(JSON.stringify({address:req,bucket:bucket,data:obj}));						
+						data+ = chunk;							
 			 });
 			 stream.on('close',function() {
-					
+					console.log("IPFS Retrieve Packaged",err,data);
+					obj=JSON.parse(data);						
+					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));						
 		     });			
 		});
 		
