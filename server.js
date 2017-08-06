@@ -248,7 +248,7 @@ const requestColdStorageSet=function(request,reply) {
 						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/packaged.json") {
 								hash=ipfsfiles[i].hash;
 						}	
-						if(ipfsfiles[i].path==node.wallet.address+"/"+bucket+"/") {
+						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/") {
 								root=ipfsfiles[i].hash;
 						}				   
 					}
@@ -343,8 +343,8 @@ const requestColdStorageGet=function(request,reply) {
 		var ipfsAPI = require('ipfs-api');
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 		var data="";
-		console.log("/ipfs/"+ipfshash);
-		ipfsinstance.files.get("/ipfs/"+ipfshash,function (err, stream) {			
+		console.log("/ipfs/"+json.ipfshash);
+		ipfsinstance.files.get("/ipfs/"+json.ipfshash,function (err, stream) {			
 			 stream.on('data', function(chunk) {
 						data+=chunk;							
 			 });
