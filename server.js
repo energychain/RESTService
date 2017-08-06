@@ -334,7 +334,7 @@ const requestColdStorageGet=function(request,reply) {
 		var ipfsAPI = require('ipfs-api');
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 		var data="";
-		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/package.json",function (err, stream) {			
+		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json",function (err, stream) {			
 			 stream.on('data', function(chunk) {
 						data += chunk.toString('utf8');							
 			 });
