@@ -337,12 +337,13 @@ const requestColdStorageGet=function(request,reply) {
 		console.log("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json");
 		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json",function (err, stream) {			
 			 stream.on('data', function(chunk) {
-						data += chunk.toString('utf8');							
+						data += chunk.toString('utf8');	
+						obj=JSON.parse(data);
+						console.log("IPFS Retrieve HTML",err,obj);
+						reply(JSON.stringify({address:req,bucket:bucket,data:obj}));						
 			 });
 			 stream.on('close',function() {
-					obj=JSON.parse(data);
-					console.log("IPFS Retrieve HTML",err,obj);
-					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+					
 		     });			
 		});
 		
