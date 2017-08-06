@@ -344,7 +344,7 @@ const requestColdStorageGet=function(request,reply) {
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 		var data="";
 		console.log("/ipfs/"+json.ipfshash);
-		ipfsinstance.files.get("/ipfs/"+json.ipfshash,function (err, stream) {			
+		ipfsinstance.files.get(json.ipfshash,function (err, stream) {			
 			 stream.on('data', function(chunk) {
 						data+=chunk;
 						console.log("IPFS Retrieve Packaged",err,data);
