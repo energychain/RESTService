@@ -237,7 +237,7 @@ const requestColdStorageSet=function(request,reply) {
 			});
 			ipfsobj.push({
 					path:"/"+node.wallet.address+"/"+bucket+"/packaged.json",
-					content:new Buffer(JSON.stringify(obj))
+					content:new Buffer(obj)
 			});
 			var ipfsAPI = require('ipfs-api');
 			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
