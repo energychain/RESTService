@@ -344,15 +344,15 @@ const requestColdStorageGet=function(request,reply) {
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
 		var data="";
 		console.log("/ipfs/"+json.ipfshash);
-		ipfsinstance.files.get(json.ipfshash,function (err, stream) {			
-			 stream.on('data', function(chunk) {
+		ipfsinstance.files.get(json.ipfshash,function (err, stream) {				 
+			 stream.content.on('data', function(chunk) {
 						data+=chunk;
 						console.log(chunk);
 						console.log("IPFS Retrieve Packaged",err,data);
 						obj=JSON.parse(data);						
 						reply(JSON.stringify({address:req,bucket:bucket,data:obj}));								
 			 });
-			 stream.on('finish',function() {
+			 stream.content.on('finish',function() {
 										
 		     });			
 		});
