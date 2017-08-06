@@ -333,14 +333,8 @@ const requestColdStorageGet=function(request,reply) {
 		var obj=[];
 		var ipfsAPI = require('ipfs-api');
 		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
+		var data="";
 		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/package.json",function (err, stream) {			
-			var file={
-				type: 'html',
-				name: 'html',
-				url: 'playground_base.html',
-				content:""
-			};
-			 var data="";
 			 stream.on('data', function(chunk) {
 						data += chunk.toString('utf8');							
 			 });
