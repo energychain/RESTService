@@ -358,6 +358,7 @@ const requestColdStorageGet=function(request,reply) {
 	} else {
 		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
 	}
+	}
 	
 }
 
