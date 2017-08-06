@@ -337,8 +337,8 @@ const requestColdStorageGet=function(request,reply) {
 		console.log("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json");
 		ipfsinstance.files.get("/ipfs/"+ipfshash+"/"+bucket+"/packaged.json",function (err, stream) {			
 			 stream.on('data', function(chunk) {
-						data = chunk.toString();	
-						console.log("IPFS Retrieve Packaged",err,JSON.stringify(data));
+						data = chunk;	
+						console.log("IPFS Retrieve Packaged",err,data);
 						obj=JSON.parse(data);						
 						reply(JSON.stringify({address:req,bucket:bucket,data:obj}));						
 			 });
