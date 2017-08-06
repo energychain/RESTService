@@ -351,7 +351,7 @@ const requestColdStorageGet=function(request,reply) {
 			 stream.on('data', function(chunk) {
 											
 					data+=chunk.content.toString();
-					console.log(chunk.content);
+					console.log(stream);
 					chunk.content.on('data',function(d) {
 							console.log("D",d);
 						
