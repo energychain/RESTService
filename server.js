@@ -342,7 +342,7 @@ const requestColdStorageGet=function(request,reply) {
 		console.log("/ipfs/"+ipfshash);
 		ipfsinstance.files.get("/ipfs/"+ipfshash,function (err, stream) {			
 			 stream.on('data', function(chunk) {
-						data+ = chunk;							
+						data+=chunk;							
 			 });
 			 stream.on('close',function() {
 					console.log("IPFS Retrieve Packaged",err,data);
