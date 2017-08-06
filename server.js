@@ -349,13 +349,11 @@ const requestColdStorageGet=function(request,reply) {
 			
 			
 			 stream.on('data', function(chunk) {
-						chunk.on('data',function(d) {							
-							data+=d;
-							console.log(d);
-							console.log("IPFS Retrieve Packaged",err,d);
-							reply(JSON.stringify({address:req,bucket:bucket,data:d}));			 
-							obj=JSON.parse(data);	
-						});
+											
+					data+=chunk.content.toString();
+					console.log(data);
+					console.log("IPFS Retrieve Packaged",err,data);
+					reply(JSON.stringify({address:req,bucket:bucket,data:data}));			 					
 											
 														
 			 });
