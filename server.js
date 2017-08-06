@@ -333,7 +333,8 @@ const requestColdStorageGet=function(request,reply) {
 		};
 
 	if(sendnote) sendNotification(message);
-	var json=JSON.parse(obj);
+	console.log(obj);
+	
 	if(typeof json.ipfshash!="undefined") {		
 		console.log("IPFS Hash",json.ipfshash);		
 		var ipfsAPI = require('ipfs-api');
