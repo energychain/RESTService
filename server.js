@@ -351,7 +351,7 @@ const requestColdStorageGet=function(request,reply) {
 			 stream.on('data', function(chunk) {
 											
 					data+=chunk.content.toString();
-					console.log(data);
+					console.log(chunk.content);
 					console.log("IPFS Retrieve Packaged",err,data);
 					reply(JSON.stringify({address:req,bucket:bucket,data:data}));			 					
 											
