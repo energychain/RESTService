@@ -348,7 +348,7 @@ const requestColdStorageGet=function(request,reply) {
 			 stream.on('data', function(chunk) {
 						data+=chunk;							
 			 });
-			 stream.on('close',function() {
+			 stream.on('end',function() {
 					console.log("IPFS Retrieve Packaged",err,data);
 					obj=JSON.parse(data);						
 					reply(JSON.stringify({address:req,bucket:bucket,data:obj}));						
