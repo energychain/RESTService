@@ -351,7 +351,7 @@ const requestColdStorageGet=function(request,reply) {
 					});
 					chunk.content.on('end',function(d) {
 						console.log("IPFS Retrieve Packaged",err,data);
-						reply(JSON.stringify({address:req,bucket:bucket,data:data}));
+						reply(JSON.stringify({address:req,bucket:bucket,data:data,ipfshash:json.ipfshash,ipfsroot:json.ipfsroot}));	
 					});
 					
 											
