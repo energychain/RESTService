@@ -598,24 +598,12 @@ startStopDaemon(options, function() {
 				var JWT   = require('jsonwebtoken');
 				var obj   = { id:extid }; // object/info you want to sign
 					
-
-				node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
-					skp.balancesHaben(node.wallet.address).then(function(haben) {
-							res.haben=haben;
-							skp.balancesSoll(node.wallet.address).then(function(soll) {
-								obj.haben=haben;
-								obj.soll=soll;
-								var res={};
-								res.token = JWT.sign(obj, node.wallet.address);	
-								res.auth = "secret";
-								res.soll=soll;
-								return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
-							});
-					});
+				var res={};
+				res.token = JWT.sign(obj, node.wallet.address);									
+				//return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
-				})	
                 //return reply(JSON.stringify(request.auth.credentials));
-                //return reply.redirect('/home');
+                return reply.redirect('/home');
             }
         }
     });
