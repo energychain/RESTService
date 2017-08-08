@@ -281,7 +281,7 @@ const requestPrivStorageSet=function(request,reply) {
 	var account=request.extid;
 	var bucket="priv";
 	var obj=request.payload.obj;
-
+	console.log("REQUEST-PRIV",account,obj);
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
