@@ -281,7 +281,7 @@ const requestPrivStorageSet=function(request,reply) {
 	var account=request.extid;
 	var bucket="priv";
 	var obj=request.payload.obj;
-	console.log("REQUEST-PRIV",account,obj);
+	console.log("REQUEST-PRIV	",account,obj);
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
@@ -599,7 +599,7 @@ startStopDaemon(options, function() {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH TWITTER",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, node.wallet.address);									
+				res.token = JWT.sign(obj, node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
                 //return reply(JSON.stringify(request.auth.credentials));
