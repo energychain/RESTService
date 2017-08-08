@@ -578,7 +578,7 @@ startStopDaemon(options, function() {
         password: 'cookie_encryption_password_secure',
         clientId: process.env.twitter_clientId,
         clientSecret: process.env.twitter_clientSecret,
-        isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
+        isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
     });
 
  
