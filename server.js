@@ -575,20 +575,20 @@ startStopDaemon(options, function() {
 
     server.auth.strategy('twitter', 'bell', {
         provider: 'twitter',
-        password: 'cookie_encryption_password_secure',
+        password: node.wallet.address,
         clientId: process.env.twitter_clientId,
         clientSecret: process.env.twitter_clientSecret,
-        isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
+        isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
     });
 
- 
+
     server.route({
         method: ['GET', 'POST'], // Must handle both GET and POST
         path: '/api/oauth/twitter',          // The callback endpoint registered with the provider
         config: {
             auth: 'twitter',
             handler: function (request, reply) {
-
+				console.log("TESSST");
                 if (!request.auth.isAuthenticated) {
                     return reply('Authentication failed due to: ' + request.auth.error.message);
                 }
@@ -600,13 +600,17 @@ startStopDaemon(options, function() {
 					
 				var res={};
 				res.token = JWT.sign(obj, node.wallet.address);									
-				//return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
+				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
                 //return reply(JSON.stringify(request.auth.credentials));
-                return reply.redirect('/home');
+                //return reply.redirect('/home');
             }
         }
     });
+	
+    
+	});
+
 	server.start((err) => {
 
 		if (err) {
@@ -616,8 +620,5 @@ startStopDaemon(options, function() {
 		
 		
 	});
-    server.start();
-});
-
 	
 });
