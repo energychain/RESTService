@@ -6,7 +6,9 @@ var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
 var cntR=0;
 
+
 const IPFS = require("ipfs");
+
 
 
 var ipfsinstance={};
@@ -25,6 +27,7 @@ const cors= {
 };
 
 var cache={};
+
 
 var sendNotification = function(data) {
   var headers = {
@@ -137,10 +140,22 @@ const populateObject=function(server) {
 		});	
 		server.route({
 			method:  ['GET','POST'],
+			path: '/api/priv/get/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler:  requestPrivStorageGet
+		});			
+		server.route({
+			method:  ['GET','POST'],
 			path: '/api/cold/set/{args*}',		
 			config: { auth: 'jwt',cors:cors },
 			handler: requestColdStorageSet
 		});	
+		server.route({
+			method:  ['GET','POST'],
+			path: '/api/priv/set/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler: requestPrivStorageSet
+		});			
 		server.route({
 			method:  ['GET','POST'],
 			path: '/api/gist/set/{args*}',		
@@ -262,6 +277,18 @@ const requestColdStorageSet=function(request,reply) {
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
 }
 
+const requestPrivStorageSet=function(request,reply) {
+	var account=request.extid;
+	var bucket="priv";
+	var obj=request.payload.obj;
+
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	}
+	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);			
+	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+}
+
 const requestGistStorage=function(request,reply) {
 	
 	var account=request.extid;
@@ -309,7 +336,18 @@ const requestGistStorage=function(request,reply) {
 		});		
 	} 	
 }
-
+const requestPrivStorageGet=function(request,reply) {
+	var account=request.extid;
+	var sendnote=false;
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		sendnote=true;
+	}
+	var bucket="priv";		
+	
+	var obj=node.storage.getItemSync(account+"_"+bucket);		
+	reply(JSON.stringify({address:account,bucket:bucket,data:obj}));	
+}
 const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
@@ -323,51 +361,54 @@ const requestColdStorageGet=function(request,reply) {
 		bucket=request.query.bucket;
 		req=request.query.account;
 	}
-	var obj=node.storage.getItemSync(req+"_"+bucket);		
-	var message = { 
-		  app_id: "80282eb4-5cb2-4cba-b8a3-158fc66f20b8",
-		  contents: {"en": node.options.external_id+" is using "+req},
-		  filters: [
-				{"field": "tag", "key": req, "relation": "=", "value": "1"}
-			]
-		};
+	if(bucket=="priv") { 
+		reply(JSON.stringify({address:req,bucket:bucket,data:{}})); 
+	} else {
+		var obj=node.storage.getItemSync(req+"_"+bucket);		
+		var message = { 
+			  app_id: "80282eb4-5cb2-4cba-b8a3-158fc66f20b8",
+			  contents: {"en": node.options.external_id+" is using "+req},
+			  filters: [
+					{"field": "tag", "key": req, "relation": "=", "value": "1"}
+				]
+			};
 
-	if(sendnote) sendNotification(message);
-	console.log(obj);
-	if(obj==null) {
-		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
-	} else {
-	var json=obj;	
-	if(typeof json.ipfshash!="undefined") {		
-		console.log("IPFS Hash",json.ipfshash);		
-		var ipfsAPI = require('ipfs-api');
-		var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
-		var data="";
-		console.log("/ipfs/"+json.ipfshash);
-		ipfsinstance.files.get(json.ipfshash,function (err, stream) {	
-			 stream.on('data', function(chunk) {																
-					chunk.content.on('data',function(d) {
-						data+=d.toString();					
-					});
-					chunk.content.on('end',function(d) {
-						console.log("IPFS Retrieve Packaged",err,data);
-						reply(JSON.stringify({address:req,bucket:bucket,data:data,ipfshash:json.ipfshash,ipfsroot:json.ipfsroot}));	
-					});
-					
+		if(sendnote) sendNotification(message);
+		console.log(obj);
+		if(obj==null) {
+			reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+		} else {
+		var json=obj;	
+		if(typeof json.ipfshash!="undefined") {		
+			console.log("IPFS Hash",json.ipfshash);		
+			var ipfsAPI = require('ipfs-api');
+			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
+			var data="";
+			console.log("/ipfs/"+json.ipfshash);
+			ipfsinstance.files.get(json.ipfshash,function (err, stream) {	
+				 stream.on('data', function(chunk) {																
+						chunk.content.on('data',function(d) {
+							data+=d.toString();					
+						});
+						chunk.content.on('end',function(d) {
+							console.log("IPFS Retrieve Packaged",err,data);
+							reply(JSON.stringify({address:req,bucket:bucket,data:data,ipfshash:json.ipfshash,ipfsroot:json.ipfsroot}));	
+						});
+						
+												
+															
+				 });
+				 stream.on('finish',function() {
 											
-														
-			 });
-			 stream.on('finish',function() {
-										
-		     });
-		    		
-		});
-		
-	} else {
-		reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+				 });
+						
+			});
+			
+		} else {
+			reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+		}
+		}
 	}
-	}
-	
 }
 
 
@@ -405,7 +446,7 @@ const requestHandler=function(request,reply) {
 startStopDaemon(options, function() {
 
 	var cache={};
-	
+	require('dotenv').config();
 
     const populatePaymentService=function(server) {  
 		const stripe = require("stripe")(node.storage.getItemSync("stripe_secret"));
@@ -528,9 +569,56 @@ startStopDaemon(options, function() {
 		
 	});
 
+	
+	server.register(require('bell'), function (err) {
 
-	
-	
+
+    server.auth.strategy('twitter', 'bell', {
+        provider: 'twitter',
+        password: 'cookie_encryption_password_secure',
+        clientId: process.env.twitter_clientId,
+        clientSecret: process.env.twitter_clientSecret,
+        isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
+    });
+
+ 
+    server.route({
+        method: ['GET', 'POST'], // Must handle both GET and POST
+        path: '/api/oauth/twitter',          // The callback endpoint registered with the provider
+        config: {
+            auth: 'twitter',
+            handler: function (request, reply) {
+
+                if (!request.auth.isAuthenticated) {
+                    return reply('Authentication failed due to: ' + request.auth.error.message);
+                }
+                
+                var extid = request.auth.credentials.provider+"_"+request.auth.credentials.profile.id;
+                
+				var JWT   = require('jsonwebtoken');
+				var obj   = { id:extid }; // object/info you want to sign
+					
+
+				node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
+					skp.balancesHaben(node.wallet.address).then(function(haben) {
+							res.haben=haben;
+							skp.balancesSoll(node.wallet.address).then(function(soll) {
+								obj.haben=haben;
+								obj.soll=soll;
+								var res={};
+								res.token = JWT.sign(obj, node.wallet.address);	
+								res.auth = "secret";
+								res.soll=soll;
+								return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
+							});
+					});
+					
+				})	
+                //return reply(JSON.stringify(request.auth.credentials));
+                //return reply.redirect('/home');
+            }
+        }
+    });
 	server.start((err) => {
 
 		if (err) {
@@ -540,7 +628,8 @@ startStopDaemon(options, function() {
 		
 		
 	});
-	
+    server.start();
+});
 
 	
 });
