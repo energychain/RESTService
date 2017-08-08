@@ -597,7 +597,7 @@ startStopDaemon(options, function() {
                 
 				var JWT   = require('jsonwebtoken');
 				var obj   = { id:extid }; // object/info you want to sign
-				console.log("OAUTH TWITTER,obj.id,extid);	
+				console.log("OAUTH TWITTER",obj.id,extid);	
 				var res={};
 				res.token = JWT.sign(obj, node.wallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
