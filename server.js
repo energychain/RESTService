@@ -346,8 +346,20 @@ const requestPrivStorageGet=function(request,reply) {
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
-	var obj=node.storage.getItemSync(node.wallet.address+"_"+bucket);		
-	reply(JSON.stringify({address:account,bucket:bucket,data:obj}));	
+	var obj=node.storage.getItemSync(node.wallet.address+"_"+bucket);	
+	var bal =0;
+	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
+		skp.balancesHaben(node.wallet.address).then(function(haben) {
+				bal+=haben;
+				skp.balancesSoll(node.wallet.address).then(function(soll) {
+					bal-=soll;
+					reply(JSON.stringify({address:account,payment:node.wallet.address,bucket:bucket,data:obj,balance:bal}));
+				});
+		});
+		
+	})	
+		
+		
 }
 const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
