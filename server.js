@@ -351,6 +351,7 @@ const requestPrivStorageGet=function(request,reply) {
 	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
 		skp.balancesHaben(node.wallet.address).then(function(haben) {
 				bal+=haben;
+				console.log("BAL",node.wallet.address,haben);
 				skp.balancesSoll(node.wallet.address).then(function(soll) {
 					bal-=soll;
 					reply(JSON.stringify({address:account,payment:node.wallet.address,bucket:bucket,data:obj,balance:bal}));
