@@ -587,7 +587,7 @@ startStopDaemon(options, function() {
         password: node.wallet.address,
         clientId: process.env.dropbox_clientId,
         clientSecret: process.env.dropbox_clientSecret,
-        isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
+        isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
     });
 
     server.route({
