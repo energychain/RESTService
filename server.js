@@ -582,14 +582,20 @@ startStopDaemon(options, function() {
         isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
     });
 
+    server.auth.strategy('dropbox', 'bell', {
+        provider: 'dropbox',
+        password: node.wallet.address,
+        clientId: process.env.dropbox_clientId,
+        clientSecret: process.env.dropbox_clientSecret,
+        isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
+    });
 
     server.route({
         method: ['GET', 'POST'], // Must handle both GET and POST
         path: '/api/oauth/twitter',          // The callback endpoint registered with the provider
         config: {
             auth: 'twitter',
-            handler: function (request, reply) {
-				console.log("TESSST");
+            handler: function (request, reply) {				
                 if (!request.auth.isAuthenticated) {
                     return reply('Authentication failed due to: ' + request.auth.error.message);
                 }
@@ -603,13 +609,31 @@ startStopDaemon(options, function() {
 				res.token = JWT.sign(obj, node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
-                //return reply(JSON.stringify(request.auth.credentials));
-                //return reply.redirect('/home');
             }
         }
     });
 	
-    
+	server.route({
+	method: ['GET', 'POST'], // Must handle both GET and POST
+	path: '/api/oauth/dropbox',          // The callback endpoint registered with the provider
+	config: {
+		auth: 'dropbox',
+		handler: function (request, reply) {			
+			if (!request.auth.isAuthenticated) {
+				return reply('Authentication failed due to: ' + request.auth.error.message);
+			}
+			
+			var extid = request.auth.credentials.provider+"_"+request.auth.credentials.profile.id;
+			
+			var JWT   = require('jsonwebtoken');
+			var obj   = { id:extid }; // object/info you want to sign
+			console.log("OAUTH Dropbox",obj.id,extid);	
+			var res={};
+			res.token = JWT.sign(obj, node.nodeWallet.address);									
+			return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
+		}
+	}
+    });
 	});
 
 	server.start((err) => {
