@@ -281,7 +281,6 @@ const requestPrivStorageSet=function(request,reply) {
 	var account=request.extid;
 	var bucket="priv";
 	var obj=request.payload.obj;
-	console.log("REQUEST-PRIV	",account,obj);
 	if(node.options.external_id!=account) {	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
 	}
@@ -344,8 +343,10 @@ const requestPrivStorageGet=function(request,reply) {
 		sendnote=true;
 	}
 	var bucket="priv";		
-	
-	var obj=node.storage.getItemSync(account+"_"+bucket);		
+	if(node.options.external_id!=account) {	
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	}
+	var obj=node.storage.getItemSync(node.wallet.address+"_"+bucket);		
 	reply(JSON.stringify({address:account,bucket:bucket,data:obj}));	
 }
 const requestColdStorageGet=function(request,reply) {
