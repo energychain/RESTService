@@ -587,6 +587,7 @@ startStopDaemon(options, function() {
         password: node.wallet.address,
         clientId: process.env.dropbox_clientId,
         clientSecret: process.env.dropbox_clientSecret,
+        location: 'https://fury.network',
         isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
     });
 
