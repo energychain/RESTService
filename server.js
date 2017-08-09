@@ -602,6 +602,39 @@ startStopDaemon(options, function() {
         location: 'https://fury.network',
         isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
     });
+    
+    server.auth.strategy('github', 'bell', {
+        provider: 'github',
+        password: node.wallet.address,
+        clientId: process.env.github_clientId,
+        clientSecret: process.env.github_clientSecret,
+        location: 'https://fury.network',
+        isSecure: true     // Terrible idea but required if not using HTTPS especially if developing locally
+    });
+    
+    server.route({
+        method: ['GET', 'POST'], // Must handle both GET and POST
+        path: '/api/oauth/github',          // The callback endpoint registered with the provider
+        config: {
+            auth: 'github',
+            handler: function (request, reply) {				
+                if (!request.auth.isAuthenticated) {
+                    return reply('Authentication failed due to: ' + request.auth.error.message);
+                }
+                
+                var extid = request.auth.credentials.provider+"_"+request.auth.credentials.profile.id;
+                
+				var JWT   = require('jsonwebtoken');
+				var obj   = { id:extid }; // object/info you want to sign
+				console.log("OAUTH Github",obj.id,extid);	
+				var res={};
+				res.token = JWT.sign(obj, node.nodeWallet.address);									
+				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
+					
+            }
+        }
+    });
+    
 
     server.route({
         method: ['GET', 'POST'], // Must handle both GET and POST
