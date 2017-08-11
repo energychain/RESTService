@@ -316,11 +316,12 @@ const requestPrivStorageSet=function(request,reply) {
 	var account=request.extid;
 	var bucket="priv";
 	var obj=request.payload.obj;
-	if(node.options.external_id!=account) {	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
-	}
+	
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);			
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+	node=null;
 }
 
 const requestGistStorage=function(request,reply) {
@@ -388,11 +389,11 @@ const requestPrivStorageGet=function(request,reply) {
 				skp.balancesSoll(node.wallet.address).then(function(soll) {
 					bal-=soll;
 					reply(JSON.stringify({address:account,payment:node.wallet.address,bucket:bucket,data:obj,balance:bal}));
+					node=null;
 				});
 		});
 		
-	})	
-		
+	})			
 		
 }
 const requestColdStorageGet=function(request,reply) {
