@@ -13,31 +13,6 @@ const cors= {
 			origin: ['*'],
 			additionalHeaders: ['cache-control', 'x-requested-with']
 };
-
-
-var ipfsinstance={};
-
- var options = {
-    outFile: 'restservice.out.log',   
-    errFile: 'restservice.err.log',
-    max: 1 //the script will run 3 times at most 
- };
-
-const NATS = require('nats');
-
-	var node_persist = require('node-persist');	
-	node_persist.initSync();
-	
-		var storage_locale = {	
-			initSync:function() {node_persist.initSync();},
-			getItemSync:function(key) {				   					
-					return node_persist.getItemSync(key);
-			},
-			setItemSync:function(key,value) {					
-					return node_persist.setItemSync(key,value);
-			}
-		};		
-		
 const nats_enabled = function() {
 	
 
@@ -88,6 +63,40 @@ const nats_enabled = function() {
 		};	
 	}
 }
+
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+		
+startStopDaemon(options, function() {
+
+nats_enabled();
+
+var cache={};
+
+
+var ipfsinstance={};
+
+ var options = {
+    outFile: 'restservice.out.log',   
+    errFile: 'restservice.err.log',
+    max: 1 //the script will run 3 times at most 
+ };
+
+const NATS = require('nats');
+
+	var node_persist = require('node-persist');	
+	node_persist.initSync();
+	
+		var storage_locale = {	
+			initSync:function() {node_persist.initSync();},
+			getItemSync:function(key) {				   					
+					return node_persist.getItemSync(key);
+			},
+			setItemSync:function(key,value) {					
+					return node_persist.setItemSync(key,value);
+			}
+		};		
+		
+
 
 
 const boAccess=function(extid, path,next) {
@@ -400,7 +409,7 @@ const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
 	
-	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
 		sendnote=true;
 	
 	var req="";
@@ -809,13 +818,7 @@ var sendNotification = function(data) {
 	});
 
 
-const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
-		
-startStopDaemon(options, function() {
 
-nats_enabled();
-
-var cache={};
 
 	server.start((err) => {
 
