@@ -400,7 +400,7 @@ const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
 	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
 		sendnote=true;
 	
 	var req="";
@@ -457,6 +457,7 @@ const requestColdStorageGet=function(request,reply) {
 		}
 		}
 	}
+	node=null;
 }
 
 
