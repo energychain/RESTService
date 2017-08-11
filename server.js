@@ -268,9 +268,8 @@ const requestColdStorageSet=function(request,reply) {
 		bucket=request.payload.bucket;
 		obj=request.payload.obj;
 	}	
-	if(node.options.external_id!=account) {	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
-	}
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
 	
 	var json=JSON.parse(obj);
@@ -309,6 +308,7 @@ const requestColdStorageSet=function(request,reply) {
 			});
 	}
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+	node=null;
 }
 
 const requestPrivStorageSet=function(request,reply) {
