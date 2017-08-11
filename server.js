@@ -466,7 +466,7 @@ const requestHandler=function(request,reply) {
 	var shift=1;
 	console.log("EXTID in Node:",node.options.external_id);
 	if(node.options.external_id!=account) {	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
 	}
 	var r=request.path.split("/");
 	if(r.length<5) reply("ERROR");
@@ -490,8 +490,8 @@ const requestHandler=function(request,reply) {
 	});			
 }
 
-	var node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
-	var cache={};
+	const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
+	
 	require('dotenv').config();
 
     const populatePaymentService=function(server) {  
@@ -597,19 +597,6 @@ var sendNotification = function(data) {
   req.write(JSON.stringify(data));
   req.end();
 };
-
-	
-startStopDaemon(options, function() {
-
-nats_enabled();
-const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
-
-var cache={};
-
-
-
-
-	
 
 
 	const server = new Hapi.Server({		
@@ -819,6 +806,15 @@ var cache={};
     });
 	});
 
+
+		
+startStopDaemon(options, function() {
+
+nats_enabled();
+const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+
+var cache={};
+
 	server.start((err) => {
 
 		if (err) {
@@ -828,7 +824,7 @@ var cache={};
 		
 		setInterval(function() { server.stop(); server.start(); }, 5000);
 	});
-
+	
 	
 });
 
