@@ -807,11 +807,11 @@ var sendNotification = function(data) {
 	});
 
 
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 		
 startStopDaemon(options, function() {
 
 nats_enabled();
-const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 
 var cache={};
 
