@@ -13,6 +13,45 @@ const cors= {
 			origin: ['*'],
 			additionalHeaders: ['cache-control', 'x-requested-with']
 };
+
+
+ var options = {
+    outFile: 'restservice.out.log',   
+    errFile: 'restservice.err.log',
+    max: 1 //the script will run 3 times at most 
+ };
+
+const NATS = require('nats');
+
+	var node_persist = require('node-persist');	
+	node_persist.initSync();
+	
+		var storage_locale = {	
+			initSync:function() {node_persist.initSync();},
+			getItemSync:function(key) {				   					
+					return node_persist.getItemSync(key);
+			},
+			setItemSync:function(key,value) {					
+					return node_persist.setItemSync(key,value);
+			}
+		};		
+		
+storage_locale = {	
+			initSync:function() {node_persist.initSync();},
+			getItemSync:function(key) {				  							
+					return node_persist.getItemSync(key);
+			},
+			setItemSync:function(key,value) {					
+					return node_persist.setItemSync(key,value);
+			}
+		};	
+
+
+nats_enabled();
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+		
+startStopDaemon(options, function() {
+
 const nats_enabled = function() {
 	
 
@@ -63,36 +102,6 @@ const nats_enabled = function() {
 		};	
 	}
 }
-
- var options = {
-    outFile: 'restservice.out.log',   
-    errFile: 'restservice.err.log',
-    max: 1 //the script will run 3 times at most 
- };
-
-const NATS = require('nats');
-
-	var node_persist = require('node-persist');	
-	node_persist.initSync();
-	
-		var storage_locale = {	
-			initSync:function() {node_persist.initSync();},
-			getItemSync:function(key) {				   					
-					return node_persist.getItemSync(key);
-			},
-			setItemSync:function(key,value) {					
-					return node_persist.setItemSync(key,value);
-			}
-		};		
-		
-
-
-
-nats_enabled();
-const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
-		
-startStopDaemon(options, function() {
-
 
 
 var cache={};
