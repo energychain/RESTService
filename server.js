@@ -811,7 +811,7 @@ var sendNotification = function(data) {
 startStopDaemon(options, function() {
 
 nats_enabled();
-const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 
 var cache={};
 
