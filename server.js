@@ -490,7 +490,7 @@ const requestHandler=function(request,reply) {
 	});			
 }
 
-	node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
+	var node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
 	var cache={};
 	require('dotenv').config();
 
@@ -597,12 +597,12 @@ var sendNotification = function(data) {
   req.write(JSON.stringify(data));
   req.end();
 };
-const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+
 	
 startStopDaemon(options, function() {
 
 nats_enabled();
-
+const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 
 var cache={};
 
