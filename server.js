@@ -597,12 +597,13 @@ var sendNotification = function(data) {
   req.write(JSON.stringify(data));
   req.end();
 };
+const node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 	
 startStopDaemon(options, function() {
 
 nats_enabled();
 
-var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+
 var cache={};
 
 
