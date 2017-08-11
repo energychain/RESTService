@@ -317,7 +317,7 @@ const requestPrivStorageSet=function(request,reply) {
 	var bucket="priv";
 	var obj=request.payload.obj;
 	
-	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
 	
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);			
 	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
@@ -337,7 +337,7 @@ const requestGistStorage=function(request,reply) {
 		obj=request.payload.obj;
 	}	
 	if(node.options.external_id!=account) {	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});		
+		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
 	}
    
   
@@ -375,7 +375,7 @@ const requestPrivStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
 
-	var	node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+	var	node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
 	sendnote=true;
 	
 	var bucket="priv";		
