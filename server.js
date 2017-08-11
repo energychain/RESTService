@@ -575,7 +575,7 @@ const requestHandler=function(request,reply) {
 var sendNotification = function(data) {
   var headers = {
     "Content-Type": "application/json; charset=utf-8",
-    "Authorization": "Basic "+node.storage.getItemSync("OSKEY")
+    "Authorization": "Basic "+host_node.storage.getItemSync("OSKEY")
   };
   
   var options = {
