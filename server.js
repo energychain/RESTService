@@ -568,13 +568,6 @@ const requestHandler=function(request,reply) {
 		
 		
 	}
-	
-startStopDaemon(options, function() {
-
-nats_enabled();
-
-
-var cache={};
 
 
 var sendNotification = function(data) {
@@ -604,6 +597,15 @@ var sendNotification = function(data) {
   req.write(JSON.stringify(data));
   req.end();
 };
+	
+startStopDaemon(options, function() {
+
+nats_enabled();
+
+
+var cache={};
+
+
 
 
 	
