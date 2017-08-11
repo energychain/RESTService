@@ -467,10 +467,9 @@ const requestColdStorageGet=function(request,reply) {
 const requestHandler=function(request,reply) {
 	var account=request.extid;
 	var shift=1;
-	console.log("EXTID in Node:",node.options.external_id);
-	if(node.options.external_id!=account) {	
-		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
-	}
+	
+	var	node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
+
 	var r=request.path.split("/");
 	if(r.length<5) reply("ERROR");
 	 
@@ -490,7 +489,8 @@ const requestHandler=function(request,reply) {
 				x[r_method].apply(this,margs).then(function(res) {
 						reply(JSON.stringify(res));				
 				}).catch(reply(JSON.stringify({status:error})));					
-	});			
+	});	
+	node=null;		
 }
 
 	//const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
