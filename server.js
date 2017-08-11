@@ -9,6 +9,10 @@ var cntR=0;
 
 const IPFS = require("ipfs");
 
+const cors= {
+			origin: ['*'],
+			additionalHeaders: ['cache-control', 'x-requested-with']
+};
 
 
 var ipfsinstance={};
@@ -569,10 +573,6 @@ startStopDaemon(options, function() {
 
 nats_enabled();
 
-const cors= {
-			origin: ['*'],
-			additionalHeaders: ['cache-control', 'x-requested-with']
-};
 
 var cache={};
 
