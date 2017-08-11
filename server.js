@@ -63,17 +63,6 @@ const nats_enabled = function() {
 		};	
 	}
 }
-nats_enabled();
-const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
-		
-startStopDaemon(options, function() {
-
-
-
-var cache={};
-
-
-var ipfsinstance={};
 
  var options = {
     outFile: 'restservice.out.log',   
@@ -97,6 +86,19 @@ const NATS = require('nats');
 		};		
 		
 
+
+
+nats_enabled();
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+		
+startStopDaemon(options, function() {
+
+
+
+var cache={};
+
+
+var ipfsinstance={};
 
 
 const boAccess=function(extid, path,next) {
