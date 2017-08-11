@@ -624,7 +624,7 @@ var sendNotification = function(data) {
 		  console.log(err);
 		}
 		//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
-		var secret=node.nodeWallet.address;
+		var secret=host_node.nodeWallet.address;
 		
 		server.auth.strategy('jwt', 'jwt',
 		{ key: secret,         
@@ -648,7 +648,7 @@ var sendNotification = function(data) {
 
     server.auth.strategy('twitter', 'bell', {
         provider: 'twitter',
-        password: node.wallet.address,
+        password: host_node.wallet.address,
         clientId: process.env.twitter_clientId,
         clientSecret: process.env.twitter_clientSecret,
         isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
@@ -656,7 +656,7 @@ var sendNotification = function(data) {
 
     server.auth.strategy('dropbox', 'bell', {
         provider: 'dropbox',
-        password: node.wallet.address,
+        password: host_node.wallet.address,
         clientId: process.env.dropbox_clientId,
         clientSecret: process.env.dropbox_clientSecret,
         location: 'https://fury.network',
@@ -665,7 +665,7 @@ var sendNotification = function(data) {
     
     server.auth.strategy('github', 'bell', {
         provider: 'github',
-        password: node.wallet.address,
+        password: host_node.wallet.address,
         clientId: process.env.github_clientId,
         clientSecret: process.env.github_clientSecret,
         location: 'https://fury.network',
@@ -674,7 +674,7 @@ var sendNotification = function(data) {
     
     server.auth.strategy('google', 'bell', {
         provider: 'google',
-        password: node.wallet.address,
+        password: host_node.wallet.address,
         clientId: process.env.google_clientId,
         clientSecret: process.env.google_clientSecret,
         location: 'https://fury.network',
@@ -683,7 +683,7 @@ var sendNotification = function(data) {
     
     server.auth.strategy('linkedin', 'bell', {
         provider: 'linkedin',
-        password: node.wallet.address,
+        password: host_node.wallet.address,
         clientId: process.env.linkedin_clientId,
         clientSecret: process.env.linkedin_clientSecret,
         location: 'https://fury.network',
@@ -706,7 +706,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH linkedin",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, node.nodeWallet.address);									
+				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -729,7 +729,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH Google",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, node.nodeWallet.address);									
+				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -752,7 +752,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH Github",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, node.nodeWallet.address);									
+				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -776,7 +776,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH TWITTER",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, node.nodeWallet.address);									
+				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -799,7 +799,7 @@ var sendNotification = function(data) {
 			var obj   = { id:extid }; // object/info you want to sign
 			console.log("OAUTH Dropbox",obj.id,extid);	
 			var res={};
-			res.token = JWT.sign(obj, node.nodeWallet.address);									
+			res.token = JWT.sign(obj, host_node.nodeWallet.address);									
 			return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 		}
 	}
