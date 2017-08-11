@@ -52,7 +52,7 @@ const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,s
 		
 startStopDaemon(options, function() {
 
-const nats_enabled = function() {
+const nats_enabled = function(cb) {
 	
 
 	if(typeof process.env.NATS !="undefined") {
@@ -101,9 +101,10 @@ const nats_enabled = function() {
 			}
 		};	
 	}
+	cb();
 }
 
-nats_enabled();
+nats_enabled(function() {
 var cache={};
 
 
@@ -842,6 +843,7 @@ var sendNotification = function(data) {
 	});
 	
 	
+});
 });
 
 
