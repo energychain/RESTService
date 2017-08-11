@@ -495,8 +495,8 @@ const requestHandler=function(request,reply) {
 	require('dotenv').config();
 
     const populatePaymentService=function(server) {  
-		const stripe = require("stripe")(node.storage.getItemSync("stripe_secret"));
-		console.log("Payment Account",node.wallet.address);
+		const stripe = require("stripe")(host_node.storage.getItemSync("stripe_secret"));
+		console.log("Payment Account",host_node.wallet.address);
 		  
 		server.route({
 			method: ['GET','POST'],
