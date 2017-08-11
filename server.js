@@ -214,9 +214,9 @@ const loginHandler=function(request,reply)  {
 	//
 	var secret=host_node.nodeWallet.address;		
 	var res={};				
-	if(node.storage.getItemSync("jwt_"+extid)!=null) {
+	if(host_node.storage.getItemSync("jwt_"+extid)!=null) {
 				res.state="load";
-				if(node.storage.getItemSync("jwt_"+extid)!= extsecret) {
+				if(host_node.storage.getItemSync("jwt_"+extid)!= extsecret) {
 					var JWT   = require('jsonwebtoken');
 					var obj   = { id:'demo' }; // object/info you want to sign						
 					
