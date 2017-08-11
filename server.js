@@ -100,12 +100,13 @@ const nats_enabled = function(cb) {
 		};	
 	}
 	
-	const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
-
+	
 	cb();
 }
 
 nats_enabled(function() {
+const host_node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
+
 var cache={};
 
 
