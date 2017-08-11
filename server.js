@@ -399,10 +399,10 @@ const requestPrivStorageGet=function(request,reply) {
 const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
-	if(node.options.external_id!=account) {	
+	
 		node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
 		sendnote=true;
-	}
+	
 	var req="";
 	var bucket="";		
 	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
