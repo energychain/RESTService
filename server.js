@@ -490,7 +490,7 @@ const requestHandler=function(request,reply) {
 	});			
 }
 
-	const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
+	node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
 	var cache={};
 	require('dotenv').config();
 
@@ -602,7 +602,7 @@ startStopDaemon(options, function() {
 
 nats_enabled();
 
-
+var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true,storage:storage_locale});
 var cache={};
 
 
