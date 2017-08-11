@@ -85,45 +85,6 @@ const nats_enabled = function() {
 	}
 }
 
-startStopDaemon(options, function() {
-
-nats_enabled();
-
-const cors= {
-			origin: ['*'],
-			additionalHeaders: ['cache-control', 'x-requested-with']
-};
-
-var cache={};
-
-
-var sendNotification = function(data) {
-  var headers = {
-    "Content-Type": "application/json; charset=utf-8",
-    "Authorization": "Basic "+node.storage.getItemSync("OSKEY")
-  };
-  
-  var options = {
-    host: "onesignal.com",
-    port: 443,
-    path: "/api/v1/notifications",
-    method: "POST",
-    headers: headers
-  };
-  
-  var https = require('https');
-  var req = https.request(options, function(res) {  
-    res.on('data', function(data) {
-    });
-  });
-  
-  req.on('error', function(e) {
-    
-  });
-  
-  req.write(JSON.stringify(data));
-  req.end();
-};
 
 const boAccess=function(extid, path,next) {
 				var account=extid;
@@ -603,6 +564,47 @@ const requestHandler=function(request,reply) {
 		
 		
 	}
+	
+startStopDaemon(options, function() {
+
+nats_enabled();
+
+const cors= {
+			origin: ['*'],
+			additionalHeaders: ['cache-control', 'x-requested-with']
+};
+
+var cache={};
+
+
+var sendNotification = function(data) {
+  var headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Basic "+node.storage.getItemSync("OSKEY")
+  };
+  
+  var options = {
+    host: "onesignal.com",
+    port: 443,
+    path: "/api/v1/notifications",
+    method: "POST",
+    headers: headers
+  };
+  
+  var https = require('https');
+  var req = https.request(options, function(res) {  
+    res.on('data', function(data) {
+    });
+  });
+  
+  req.on('error', function(e) {
+    
+  });
+  
+  req.write(JSON.stringify(data));
+  req.end();
+};
+
 
 	
 
