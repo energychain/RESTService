@@ -490,7 +490,7 @@ const requestHandler=function(request,reply) {
 	});			
 }
 
-	const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
+	//const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
 	
 	require('dotenv').config();
 
