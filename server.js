@@ -826,7 +826,7 @@ var cache={};
 		}
 		console.log(`Server running at: ${server.info.uri}`);
 		
-		setInterval(function() { server.stop() server.start(); }, 5000);
+		setInterval(function() { server.stop(); server.start(); }, 5000);
 	});
 
 	
