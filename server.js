@@ -271,6 +271,7 @@ const requestColdStorageSet=function(request,reply) {
 	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
 
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
+	var path=node.wallet.address;
 	
 	var json=JSON.parse(obj);
 	if((json.length>0)&&(typeof json[0].content != "undefined")) {
@@ -293,17 +294,17 @@ const requestColdStorageSet=function(request,reply) {
 					var hash="";
 					var root="";
 					for(var i=0;i<ipfsfiles.length;i++) {
-						if(ipfsfiles[i].path=="/"+node.wallet.address+"/"+bucket+"/packaged.json") {
+						if(ipfsfiles[i].path=="/"+path+"/"+bucket+"/packaged.json") {
 								hash=ipfsfiles[i].hash;
 						}	
-						if(ipfsfiles[i].path==node.wallet.address+"/"+bucket) {
+						if(ipfsfiles[i].path==path+"/"+bucket) {
 								root=ipfsfiles[i].hash;
 						}				   
 					}
 					var obj={}
 				    obj.ipfshash = hash;
 				    obj.ipfsroot= root;
-				    node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);
+				    host_node.storage.setItemSync(path+"_"+bucket,obj);
 					console.log("IPFS",err,ipfsfiles);
 			});
 	}
