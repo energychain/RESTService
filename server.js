@@ -18,8 +18,76 @@ var ipfsinstance={};
     errFile: 'restservice.err.log',
     max: 1 //the script will run 3 times at most 
  };
- 
-var node= new StromDAOBO.Node({external_id:"node",testMode:true});
+
+const NATS = require('nats');
+
+	var node_persist = require('node-persist');	
+	node_persist.initSync();
+	
+		var storage_locale = {	
+			initSync:function() {node_persist.initSync();},
+			getItemSync:function(key) {				   					
+					return node_persist.getItemSync(key);
+			},
+			setItemSync:function(key,value) {					
+					return node_persist.setItemSync(key,value);
+			}
+		};		
+		
+const nats_enabled = function() {
+	
+
+	if(typeof process.env.NATS !="undefined") {
+		var arg_servers=process.env.NATS.split(",");
+		var servers= [];
+		for(var i=0;i<arg_servers.length;i++) {
+				servers.push(arg_servers[i]);
+		}
+		var nats= NATS.connect({servers:servers});	
+		var node_persist = require('node-persist');
+			
+		console.log("Using NATS");
+		nats.subscribe('query',  function(request, replyTo) {
+				console.log("NATS Query: ",request);
+				if(node_persist.getItemSync(request)!=null) {
+						nats.publish(replyTo, node_persist.getItemSync(request));
+				}
+		});
+
+		nats.subscribe('set',  function(request, replyTo) {
+				console.log("NATS SET: ",request);
+				var json=JSON.parse(request);				
+				node_persist.setItemSync(json.key,json.value);
+		});
+
+
+		storage_locale = {	
+			initSync:function() {node_persist.initSync();},
+			getItemSync:function(key) {
+				   
+					if(node_persist.getItemSync(key)==null) {					
+						nats.requestOne('query', key, {}, 500, function(response) {					
+						  if(response.code && response.code === NATS.REQ_TIMEOUT) {
+							// Timeout Query 
+							return;
+						  }
+						  return response;					  
+						});
+					}
+					
+					return node_persist.getItemSync(key);
+			},
+			setItemSync:function(key,value) {
+					nats.publish('set', JSON.stringify({key:key,value:value}));
+					return node_persist.setItemSync(key,value);
+			}
+		};	
+	}
+}
+
+startStopDaemon(options, function() {
+
+nats_enabled();
 
 const cors= {
 			origin: ['*'],
@@ -62,7 +130,7 @@ const boAccess=function(extid, path,next) {
 				var shift=1;
 				cntR++;
 				
-				var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});
+				var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});				
 				var r=path.split("/");
 				if(r.length<5) reply("ERROR");
 				 
@@ -86,7 +154,7 @@ const boAccess=function(extid, path,next) {
 };
 	
 const populateObject=function(server) {
-		var node= new StromDAOBO.Node({external_id:'1337',rpc:rpc,testMode:true});
+		var node= new StromDAOBO.Node({external_id:'1337',rpc:rpc,testMode:true,storage:storage_locale});
 		var names=Object.getOwnPropertyNames(node);
 		var html="";
 		
@@ -116,7 +184,7 @@ const populateObject=function(server) {
 								account=request.params.extid;
 							}
 							
-							var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true});					
+							var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});												
 							reply(JSON.stringify(node.wallet.address));
 					}					
 		});		
@@ -457,8 +525,7 @@ const requestHandler=function(request,reply) {
 	});			
 }
 
-startStopDaemon(options, function() {
-
+	const node= new StromDAOBO.Node({external_id:"node",testMode:true,storage:storage_locale});
 	var cache={};
 	require('dotenv').config();
 
@@ -756,5 +823,8 @@ startStopDaemon(options, function() {
 		
 		
 	});
+
 	
 });
+
+
