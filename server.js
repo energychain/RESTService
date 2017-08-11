@@ -268,7 +268,7 @@ const requestColdStorageSet=function(request,reply) {
 		bucket=request.payload.bucket;
 		obj=request.payload.obj;
 	}	
-	const node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
 
 	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
 	
