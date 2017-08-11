@@ -78,7 +78,7 @@ const nats_enabled = function() {
 				node_persist.setItemSync(json.key,json.value);
 		});
 
-
+		console.log("STORAGE LOCAL",storage_locale);
 		storage_locale = {	
 			initSync:function() {node_persist.initSync();},
 			getItemSync:function(key) {
