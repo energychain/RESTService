@@ -211,8 +211,8 @@ const loginHandler=function(request,reply)  {
 		extsecret=request.payload.secret;
 	}
 	
-	//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
-	var secret=node.nodeWallet.address;		
+	//
+	var secret=host_node.nodeWallet.address;		
 	var res={};				
 	if(node.storage.getItemSync("jwt_"+extid)!=null) {
 				res.state="load";
@@ -229,13 +229,14 @@ const loginHandler=function(request,reply)  {
 	} else {
 		res.state="create";
 	}
-	node.storage.setItemSync("jwt_"+extid,extsecret);
+	host_node.storage.setItemSync("jwt_"+extid,extsecret);
 	var JWT   = require('jsonwebtoken');
 	var obj   = { id:extid }; // object/info you want to sign
 		
 	
 	res.token = JWT.sign(obj, secret);	
 	res.auth = "secret";
+	var node= new StromDAOBO.Node({external_id:extid,rpc:rpc,testMode:true});
 	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
 		skp.balancesHaben(node.wallet.address).then(function(haben) {
 				res.haben=haben;
