@@ -65,8 +65,8 @@ const nats_enabled = function(cb) {
 		console.log("Using NATS");
 		nats.subscribe('query',  function(request, replyTo) {
 				console.log("NATS Query: ",request);
-				if(node_persist.getItemSync(request)!=null) {
-						nats.publish(replyTo, node_persist.getItemSync(request));
+				if((node_persist.getItemSync(request)!=null)&&(node_persist.getItemSync(request).length>0)) {
+						nats.publish(replyTo, node_persist.getItemSync(request).toString());
 				}
 		});
 
