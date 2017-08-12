@@ -238,7 +238,7 @@ const loginHandler=function(request,reply)  {
 	}
 	
 	//
-	var secret="EnergyChain";		
+	
 	var res={};				
 	if(host_node.storage.getItemSync("jwt_"+extid)!=null) {
 				res.state="load";
@@ -246,7 +246,7 @@ const loginHandler=function(request,reply)  {
 					var JWT   = require('jsonwebtoken');
 					var obj   = { id:'demo' }; // object/info you want to sign						
 					
-					res.token = JWT.sign(obj, secret);										
+					res.token = JWT.sign(obj, "EnergyChain");										
 					res.auth =	"demo";
 					
 					reply(JSON.stringify(res));
@@ -260,7 +260,7 @@ const loginHandler=function(request,reply)  {
 	var obj   = { id:extid }; // object/info you want to sign
 		
 	
-	res.token = JWT.sign(obj, secret);	
+	res.token = JWT.sign(obj, "EnergyChain");	
 	res.auth = "secret";
 	var node= new StromDAOBO.Node({external_id:extid,rpc:rpc,testMode:true});
 	node.stromkontoproxy("0xf2E3FAB8c3A82388EFd9B5fd9F4610509c4855F4").then(function(skp) {
