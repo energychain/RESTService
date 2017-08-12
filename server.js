@@ -238,7 +238,7 @@ const loginHandler=function(request,reply)  {
 	}
 	
 	//
-	var secret=host_node.nodeWallet.address;		
+	var secret="EnergyChain";		
 	var res={};				
 	if(host_node.storage.getItemSync("jwt_"+extid)!=null) {
 				res.state="load";
