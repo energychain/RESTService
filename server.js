@@ -87,6 +87,7 @@ const nats_enabled = function(cb) {
 							// Timeout Query 
 							return;
 						  }		
+						  console.log("RESPONSE",response);
 						  node_persist.setItemSync(key,response);				  
 						  return response;					  
 						});
