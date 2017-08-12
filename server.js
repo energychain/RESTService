@@ -652,7 +652,7 @@ var sendNotification = function(data) {
 		  console.log(err);
 		}
 		//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});
-		var secret=host_node.nodeWallet.address;
+		var secret="EnergyChain";
 		
 		server.auth.strategy('jwt', 'jwt',
 		{ key: secret,         
