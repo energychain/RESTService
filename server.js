@@ -6,6 +6,7 @@ var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
 var cntR=0;
 Error.stackTraceLimit = Infinity;	
+require('newrelic');
 
 const IPFS = require("ipfs");
 

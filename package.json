@@ -28,6 +28,7 @@
     "hapi-auth-jwt2": "^7.3.0",
     "ipfs": "^0.25.1",
     "joi": "^10.6.0",
+    "newrelic": "^2.1.0",
     "quick-gist": "^1.4.0",
     "start-stop-daemon": "^0.1.1",
     "stripe": "^4.23.1",
