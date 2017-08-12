@@ -732,7 +732,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH linkedin",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
+				res.token = JWT.sign(obj, "EnergyChain");									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -755,7 +755,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH Google",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
+				res.token = JWT.sign(obj, "EnergyChain");									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -778,7 +778,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH Github",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
+				res.token = JWT.sign(obj, "EnergyChain");									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -802,7 +802,7 @@ var sendNotification = function(data) {
 				var obj   = { id:extid }; // object/info you want to sign
 				console.log("OAUTH TWITTER",obj.id,extid);	
 				var res={};
-				res.token = JWT.sign(obj, host_node.nodeWallet.address);									
+				res.token = JWT.sign(obj, "EnergyChain");									
 				return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 					
             }
@@ -825,7 +825,7 @@ var sendNotification = function(data) {
 			var obj   = { id:extid }; // object/info you want to sign
 			console.log("OAUTH Dropbox",obj.id,extid);	
 			var res={};
-			res.token = JWT.sign(obj, host_node.nodeWallet.address);									
+			res.token = JWT.sign(obj, "EnergyChain");									
 			return reply.redirect('/?sectoken='+res.token+'&extid='+request.auth.credentials.query.extid+'&inject='+request.auth.credentials.query.inject);
 		}
 	}
