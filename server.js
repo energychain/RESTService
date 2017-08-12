@@ -675,6 +675,7 @@ var sendNotification = function(data) {
         provider: 'twitter',
         password: host_node.wallet.address,
         clientId: process.env.twitter_clientId,
+        location: 'https://fury.network',
         clientSecret: process.env.twitter_clientSecret,
         isSecure: false     // Terrible idea but required if not using HTTPS especially if developing locally
     });
