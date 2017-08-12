@@ -6,7 +6,7 @@ var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
 var cntR=0;
 Error.stackTraceLimit = Infinity;	
-require('newrelic');
+
 
 const IPFS = require("ipfs");
 
@@ -646,7 +646,7 @@ var sendNotification = function(data) {
 			reply('StromDAO BO - REST API v0.0.0.0.0.0.0.0.1');
 		}
 	});
-
+	require('newrelic');
 	server.register(require('hapi-auth-jwt2'), function (err) {
 
 		if(err){
