@@ -62,7 +62,7 @@ const nats_enabled = function(cb) {
 		var nats= NATS.connect({servers:servers});	
 		var node_persist = require('node-persist');
 			
-		console.log("Using NATS");
+		console.log("Using NATS",servers);
 		nats.subscribe('query',  function(request, replyTo) {
 				console.log("NATS Query: ",request);
 				if((node_persist.getItemSync(request)!=null)&&(node_persist.getItemSync(request).length>0)) {
