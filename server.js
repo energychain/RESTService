@@ -86,12 +86,15 @@ const nats_enabled = function(cb) {
 						  if(response.code && response.code === NATS.REQ_TIMEOUT) {
 							// Timeout Query 
 							return;
-						  }
+						  }		
+						  node_persist.setItemSync(key,response);				  
 						  return response;					  
 						});
+					} else {
+						return node_persist.getItemSync(key);	
 					}
 					
-					return node_persist.getItemSync(key);
+					
 			},
 			setItemSync:function(key,value) {
 					nats.publish('set', JSON.stringify({key:key,value:value}));
