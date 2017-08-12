@@ -5,7 +5,7 @@ const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
 var rpc="http://localhost:8540/rpc";
 var cntR=0;
-
+Error.stackTraceLimit = Infinity;
 
 const IPFS = require("ipfs");
 
@@ -75,8 +75,7 @@ const nats_enabled = function(cb) {
 				var json=JSON.parse(request);				
 				node_persist.setItemSync(json.key,json.value);
 		});
-
-		console.log("STORAGE LOCAL",storage_locale);
+	
 		storage_locale = {	
 			initSync:function() {node_persist.initSync();},
 			getItemSync:function(key) {
