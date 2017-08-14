@@ -390,11 +390,12 @@ const requestIPFSStorageSet=function(request,reply) {
 						}
 						var obj={}				    
 						obj.ipfsroot= root;
-						host_node.storage.setItemSync(path+"_"+bucket,obj);					
+						host_node.storage.setItemSync(path+"_"+bucket,obj);	
+						reply(JSON.stringify({address:node.wallet.address,bucket:bucket,ipfsroot:root}));				
 				});
 			}
 	}
-	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+	
 	node=null;
 }
 
