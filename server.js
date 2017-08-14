@@ -380,7 +380,7 @@ const requestIPFSStorageSet=function(request,reply) {
 			
 			var ipfsAPI = require('ipfs-api');
 			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
-			if(opfsobj.length>0) {
+			if(ipfsobj.length>0) {
 				ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 						var root="";
 						for(var i=0;i<ipfsfiles.length;i++) {						
@@ -393,8 +393,8 @@ const requestIPFSStorageSet=function(request,reply) {
 						host_node.storage.setItemSync(path+"_"+bucket,obj);	
 						reply(JSON.stringify({address:node.wallet.address,bucket:bucket,ipfsroot:root}));				
 				});
-			}
-	}
+			} else reply();
+	} else reply();
 	
 	node=null;
 }
