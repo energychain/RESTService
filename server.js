@@ -200,6 +200,12 @@ const populateObject=function(server) {
 		});	
 		server.route({
 			method:  ['GET','POST'],
+			path: '/api/ipfs/get/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler:  requestIPFSStorageGet
+		});			
+		server.route({
+			method:  ['GET','POST'],
 			path: '/api/priv/get/{args*}',		
 			config: { auth: 'jwt',cors:cors },
 			handler:  requestPrivStorageGet
@@ -209,7 +215,13 @@ const populateObject=function(server) {
 			path: '/api/cold/set/{args*}',		
 			config: { auth: 'jwt',cors:cors },
 			handler: requestColdStorageSet
-		});	
+		});
+		server.route({
+			method:  ['GET','POST'],
+			path: '/api/ipfs/set/{args*}',		
+			config: { auth: 'jwt',cors:cors },
+			handler: requestIPFSStorageSet	
+		});				
 		server.route({
 			method:  ['GET','POST'],
 			path: '/api/priv/set/{args*}',		
@@ -339,6 +351,53 @@ const requestColdStorageSet=function(request,reply) {
 	node=null;
 }
 
+const requestIPFSStorageSet=function(request,reply) {
+	var account=request.extid;
+	var bucket=Math.random();
+	var obj="";
+	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+		bucket=request.query.bucket;
+		obj=request.query.obj;
+	} else {
+		bucket=request.payload.bucket;
+		obj=request.payload.obj;
+	}	
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
+
+	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
+	var path=node.wallet.address;
+	
+	var json=JSON.parse(obj);
+	if(json.length>0) {
+			var ipfsobj=[];		
+			for(var i=0;i<json.length;i++) {
+				if((typeof json[i].name !="undefined")&&(typeof json[i].content !="undefined"))
+				ipfsobj.push({
+						path:"/"+node.wallet.address+"/"+bucket+"/"+json[i].name,
+						content:new Buffer(json[i].content)
+				});			
+			}
+			
+			var ipfsAPI = require('ipfs-api');
+			var ipfsinstance = ipfsAPI('/ip4/127.0.0.1/tcp/5001');
+			if(opfsobj.length>0) {
+				ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
+						var root="";
+						for(var i=0;i<ipfsfiles.length;i++) {						
+							if(ipfsfiles[i].path==path+"/"+bucket) {
+									root=ipfsfiles[i].hash;
+							}				   
+						}
+						var obj={}				    
+						obj.ipfsroot= root;
+						host_node.storage.setItemSync(path+"_"+bucket,obj);					
+				});
+			}
+	}
+	reply(JSON.stringify({address:node.wallet.address,bucket:bucket,data:obj}));
+	node=null;
+}
+
 const requestPrivStorageSet=function(request,reply) {
 	var account=request.extid;
 	var bucket="priv";
@@ -423,6 +482,7 @@ const requestPrivStorageGet=function(request,reply) {
 	})			
 		
 }
+
 const requestColdStorageGet=function(request,reply) {
 	var account=request.extid;
 	var sendnote=false;
@@ -486,7 +546,36 @@ const requestColdStorageGet=function(request,reply) {
 	}
 	node=null;
 }
-
+const requestIPFSStorageGet=function(request,reply) {
+	var account=request.extid;
+	var sendnote=false;
+	
+	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});
+		sendnote=true;
+	
+	var req="";
+	var bucket="";		
+	if((request.payload==null)||(typeof request.payload.bucket=="undefined")) {
+		bucket=request.query.bucket;
+		req=request.query.account;
+	}
+	if(bucket=="priv") { 
+		reply(JSON.stringify({address:req,bucket:bucket,data:{}})); 
+	} else {
+		var obj=node.storage.getItemSync(req+"_"+bucket);				
+		if(obj==null) {
+			reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+		} else {
+		var json=obj;	
+		if(typeof json.ipfsroot!="undefined") {		
+			reply(JSON.stringify({address:req,bucket:bucket,data:data,ipfsroot:json.ipfsroot}));				
+		} else {
+			reply(JSON.stringify({address:req,bucket:bucket,data:obj}));
+		}
+		}
+	}
+	node=null;
+}
 
 
 
