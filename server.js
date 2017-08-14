@@ -363,8 +363,7 @@ const requestIPFSStorageSet=function(request,reply) {
 		obj=request.payload.obj;
 	}	
 	var node= new StromDAOBO.Node({external_id:account,rpc:rpc,testMode:true,storage:storage_locale});		
-
-	node.storage.setItemSync(node.wallet.address+"_"+bucket,obj);	
+	
 	var path=node.wallet.address;
 	
 	var json=JSON.parse(obj);
@@ -389,9 +388,8 @@ const requestIPFSStorageSet=function(request,reply) {
 							}				   
 						}
 						var obj={}				    
-						obj.ipfsroot= root;
-						host_node.storage.setItemSync(path+"_"+bucket,obj);	
-						reply(JSON.stringify({address:node.wallet.address,bucket:bucket,ipfsroot:root}));				
+						obj.ipfsroot= root;						
+						reply(JSON.stringify({bucket:bucket,ipfsroot:root}));				
 				});
 			} else reply();
 	} else reply();
