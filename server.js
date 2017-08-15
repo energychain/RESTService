@@ -373,7 +373,7 @@ const requestIPFSStorageSet=function(request,reply) {
 				if((typeof json[i].name !="undefined")&&(typeof json[i].content !="undefined"))
 				ipfsobj.push({
 						path:"/"+node.wallet.address+"/"+bucket+"/"+json[i].name,
-						content:new Buffer(json[i].content)
+						content:new Buffer(json[i].content,'base64')
 				});			
 			}
 			
