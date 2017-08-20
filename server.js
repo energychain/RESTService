@@ -663,13 +663,16 @@ const requestHandler=function(request,reply) {
 			config: { auth: 'jwt',cors:cors },
 			handler:   function(request,reply)  {
 						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
+						
+						process.env.sev_pass
 						var cliOps = {
 									host: 'kleinerracker.brandseven.com',
 									port: 443,
 									path: '/productprices-xmlrpc',
+
 									basic_auth: {
-										user: node.storage.getItemSync("sev_user"),
-										pass: node.storage.getItemSync("sev_pass"),
+										user: process.env.sev_user,
+										pass: process.env.sev_pass
 									}
 						};
 						
