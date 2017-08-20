@@ -662,7 +662,7 @@ const requestHandler=function(request,reply) {
 			path: '/prices/{plz}/{ja}',
 			config: { auth: 'jwt',cors:cors },
 			handler:   function(request,reply)  {
-						//var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
+						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
 						var cliOps = {
 									host: 'kleinerracker.brandseven.com',
 									port: 443,
