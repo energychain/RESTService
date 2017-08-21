@@ -612,7 +612,7 @@ const requestHandler=function(request,reply) {
 	require('dotenv').config();
 
     const populatePaymentService=function(server) {  
-		const stripe = require("stripe")(host_node.storage.getItemSync("stripe_secret"));
+		const stripe = require("stripe")(process.env.stripe_secret);
 		console.log("Payment Account",host_node.wallet.address);
 		  
 		server.route({
