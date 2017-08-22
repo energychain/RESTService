@@ -397,7 +397,7 @@ const requestIPFSStorageSet=function(request,reply) {
 							host: 'app.stromdao.de',
 							path: '/privchain/sendmail.php?hash='+root+'&fnames='+fnames	
 						};
-						var req = http.get(options, function(res) {});
+						var req = https.get(options, function(res) {});
 						// https://app.stromdao.de/privchain/sendmail.php?hash="+root;				
 						reply(JSON.stringify({bucket:bucket,ipfsroot:root}));				
 				});
