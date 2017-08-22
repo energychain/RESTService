@@ -1,5 +1,6 @@
 'use strict';
 const Hapi = require('hapi');
+const https = require("https");
 var StromDAOBO = require('stromdao-businessobject');
 const startStopDaemon = require('start-stop-daemon');
 var xmlrpc = require('xmlrpc')
@@ -368,13 +369,15 @@ const requestIPFSStorageSet=function(request,reply) {
 	
 	var json=JSON.parse(obj);
 	if(json.length>0) {
-			var ipfsobj=[];		
+			var ipfsobj=[];	
+			var fnames="";	
 			for(var i=0;i<json.length;i++) {
 				if((typeof json[i].name !="undefined")&&(typeof json[i].content !="undefined"))
 				ipfsobj.push({
 						path:"/"+node.wallet.address+"/"+bucket+"/"+json[i].name,
 						content:new Buffer(json[i].content,'base64')
 				});			
+				fnames+=json[i].name+",";
 			}
 			
 			var ipfsAPI = require('ipfs-api');
@@ -382,13 +385,20 @@ const requestIPFSStorageSet=function(request,reply) {
 			if(ipfsobj.length>0) {
 				ipfsinstance.files.add(ipfsobj, function (err, ipfsfiles) {
 						var root="";
+						
 						for(var i=0;i<ipfsfiles.length;i++) {						
 							if(ipfsfiles[i].path==path+"/"+bucket) {
 									root=ipfsfiles[i].hash;
 							}				   
 						}
 						var obj={}				    
-						obj.ipfsroot= root;						
+						obj.ipfsroot= root;	
+						var options = {
+							host: 'app.stromdao.de',
+							path: '/privchain/sendmail.php?hash='+root+'&fnames='+fnames	
+						};
+						var req = http.get(options, function(res) {});
+						// https://app.stromdao.de/privchain/sendmail.php?hash="+root;				
 						reply(JSON.stringify({bucket:bucket,ipfsroot:root}));				
 				});
 			} else reply();
@@ -621,7 +631,10 @@ const requestHandler=function(request,reply) {
 			config: { cors:cors },
 			handler:   function(request,reply)  {
 				var token=request.payload.stripeToken;
-				
+				var sko_sc="0x19BF166624F485f191d82900a5B7bc22Be569895";
+				if((typeof request.payload.sko_sc !="undefined")&&(request.payload.sko_sc.length==42)) {
+					sko_sc=request.payload.sko_sc;
+				}
 				var charge = stripe.charges.create({
 				  amount: request.payload.amount,
 				  currency: "eur",
@@ -631,7 +644,7 @@ const requestHandler=function(request,reply) {
 				  var res={};
 				  if(charge.paid) {
 						console.log("Payment Account",node.wallet.address);
-						node.stromkonto("0x19BF166624F485f191d82900a5B7bc22Be569895").then(function(sko) {
+						node.stromkonto(sko_sc).then(function(sko) {
 							sko.addTx("0x0013ab4e15A14B97D517e75fb7F6f9fF13514e30",request.payload.account,request.payload.amount,0).then(function(tx) {
 								res.tx=tx;		
 								if(typeof request.payload.redirect	!= "undefined") {
