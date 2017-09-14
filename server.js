@@ -669,6 +669,34 @@ const requestHandler=function(request,reply) {
 	}    
 
 	const populateTarifService=function(server) {
+		server.route({
+			method: ['GET','POST'],
+			path: '/prices/tarif/{plz}',
+			config: { cors:cors },
+			handler:   function(request,reply)  {
+						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
+						
+						process.env.sev_pass
+						var cliOps = {
+									host: 'kleinerracker.brandseven.com',
+									port: 443,
+									path: '/productprices-xmlrpc',
+
+									basic_auth: {
+										user: process.env.sev_user,
+										pass: process.env.sev_pass
+									}
+						};
+						
+						var client = xmlrpc.createSecureClient(cliOps);		
+						client.methodCall('EnergyPricesProxy.productPricesByProductCode', ["PP_dynamisch_eingeschr_3",'efa81030fce62d7761232bd26b9f16a8cc9dc753a2662ebe6ab535f8fc5e7e957',request.params.plz,3000,'','c3ec23a16304f8d6c8692dcac2343c05'], 
+							function (error, value) {    	
+								var json=JSON.stringify(value.PP_dynamisch_eingeschr_3);													
+								reply(json);								
+						});
+						
+					}
+		});		
 		
 		server.route({
 			method: ['GET','POST'],
@@ -699,34 +727,7 @@ const requestHandler=function(request,reply) {
 					}
 		});		
 		
-		server.route({
-			method: ['GET','POST'],
-			path: '/prices/tarif/{plz}',
-			config: { cors:cors },
-			handler:   function(request,reply)  {
-						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
-						
-						process.env.sev_pass
-						var cliOps = {
-									host: 'kleinerracker.brandseven.com',
-									port: 443,
-									path: '/productprices-xmlrpc',
 
-									basic_auth: {
-										user: process.env.sev_user,
-										pass: process.env.sev_pass
-									}
-						};
-						
-						var client = xmlrpc.createSecureClient(cliOps);		
-						client.methodCall('EnergyPricesProxy.productPricesByProductCode', ["PP_dynamisch_eingeschr_3",'efa81030fce62d7761232bd26b9f16a8cc9dc753a2662ebe6ab535f8fc5e7e957',request.params.plz,3000,'','c3ec23a16304f8d6c8692dcac2343c05'], 
-							function (error, value) {    	
-								var json=JSON.stringify(value.PP_dynamisch_eingeschr_3);													
-								reply(json);								
-						});
-						
-					}
-		});		
 		
 	}
 
