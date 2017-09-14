@@ -672,7 +672,7 @@ const requestHandler=function(request,reply) {
 		server.route({
 			method: ['GET','POST'],
 			path: '/tarifs/de/{plz}',
-			config: { cors:cors },
+			config: { auth: false,cors:cors },
 			handler:   function(request,reply)  {
 						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
 						
