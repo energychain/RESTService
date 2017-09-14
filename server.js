@@ -671,7 +671,7 @@ const requestHandler=function(request,reply) {
 	const populateTarifService=function(server) {
 		server.route({
 			method: ['GET','POST'],
-			path: '/prices/tarif/{plz}',
+			path: '/tarifs/de/{plz}',
 			config: { cors:cors },
 			handler:   function(request,reply)  {
 						var node= new StromDAOBO.Node({external_id:"node",rpc:rpc,testMode:true});	
