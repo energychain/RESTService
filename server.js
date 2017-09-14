@@ -690,8 +690,8 @@ const requestHandler=function(request,reply) {
 						
 						var client = xmlrpc.createSecureClient(cliOps);		
 						client.methodCall('EnergyPricesProxy.productPricesByProductCode', ["PP_dynamisch_eingeschr_3",'efa81030fce62d7761232bd26b9f16a8cc9dc753a2662ebe6ab535f8fc5e7e957',request.params.plz,3000,'','c3ec23a16304f8d6c8692dcac2343c05'], 
-							function (error, value) {    	
-								var json=JSON.stringify(value.PP_dynamisch_eingeschr_3);													
+							function (error, value) {    									
+								var json=JSON.stringify(value.PP_dynamisch_eingeschr_3.Price[0]);													
 								reply(json);								
 						});
 						
